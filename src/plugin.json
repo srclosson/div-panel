@@ -1,0 +1,39 @@
+{
+  "type": "panel",
+  "name": "grafana-div-panel",
+  "id": "grafana-labs-grafana-div-panel",
+  "info": {
+    "description": "Create your own panel with html + css and javascript",
+    "author": {
+      "name": "srclosson@gmail.com",
+      "url": "http://grafana.com"
+    },
+    "keywords": [
+      "div",
+      "es6",
+      "htmlnode",
+      "d3"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/grafana/simple-react-panel"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/grafana/simple-react-panel/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}
