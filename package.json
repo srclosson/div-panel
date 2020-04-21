@@ -11,8 +11,23 @@
   "author": "srclosson@gmail.com",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@grafana/data": "latest",
-    "@grafana/toolkit": "latest",
-    "@grafana/ui": "latest"
+    "@grafana/data": "next",
+    "@grafana/runtime": "next",
+    "@grafana/toolkit": "next",
+    "@grafana/ui": "next",
+    "@monaco-editor/react": "3.3.0",
+    "@types/lodash": "4.14.149",
+    "@types/react": "16.9.22",
+    "lodash": "4.17.15",
+    "react": "16.12.0",
+    "postscribe": "2.0.8",
+    "prop-types": "15.5.8",
+    "@types/prop-types": "15.5.8"
+  },
+  "dependencies": {
+    "@types/jquery": "^3.3.34",
+    "@types/uuid": "^7.0.2",
+    "safe-eval": "^0.4.1",
+    "uuid": "^7.0.3"
   }
 }

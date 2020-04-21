@@ -1,10 +1,6 @@
-import React, { PureComponent } from 'react';
-import { PanelProps, PanelPlugin } from '@grafana/ui';
+import { PanelPlugin } from '@grafana/data';
+import { DivPanelParent } from 'divPanelParent';
+import { DivMonacoEditor } from 'editor';
+import { DivPanelOptions } from './types';
 
-export class MyPanel extends PureComponent<PanelProps> {
-  render() {
-    return <div>Hello from my panel</div>;
-  }
-}
-
-export const plugin = new PanelPlugin(MyPanel);
+export const plugin = new PanelPlugin<DivPanelOptions>(DivPanelParent).setEditor(DivMonacoEditor);

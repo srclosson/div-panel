@@ -1,7 +1,7 @@
 {
   "type": "panel",
-  "name": "grafana-div-panel",
-  "id": "grafana-labs-grafana-div-panel",
+  "name": "Div Panel",
+  "id": "grafana-div-panel",
   "info": {
     "description": "Create your own panel with html + css and javascript",
     "author": {
@@ -15,8 +15,8 @@
       "d3"
     ],
     "logos": {
-      "small": "img/logo.svg",
-      "large": "img/logo.svg"
+      "small": "img/logo.png",
+      "large": "img/logo.png"
     },
     "links": [
       {
