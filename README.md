@@ -36,7 +36,7 @@ Just write your html the same way you normally would:
 ```
 
 There are four callbacks provided. 
-1. `onDivPanelInit`: Called when your panel is contructed and you html is available.
+1. `onDivPanelInit`: Called when your panel is contructed and your html is available.
 2. `onDivPanelDataUpdate`: Called with the data retrieved from the datasource.
 3. `onDivPanelEnterEditMode`: Called whenever you enter edit mode.
 4. `onDivPanelExitEditMode`: Called whenever you exit edit mode.
