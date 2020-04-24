@@ -21,6 +21,10 @@
     "lodash": "4.17.15",
     "react": "16.12.0",
     "postscribe": "2.0.8",
+    "acorn": "6.4.1",
+    "minimist": "0.2.1",
+    "kind-of": "6.0.3",
+    "serialize-javascript": "2.1.1",
     "prop-types": "15.5.8",
     "@types/prop-types": "15.5.8"
   },
