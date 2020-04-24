@@ -6,12 +6,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface Props extends DivPanelProps {}
 
+const isEditMode = () => window.location.href.match(/[?&]edit/) !== null;
+
 export class DivPanelParent extends Component<Props> {
   childContainerId: string;
+  editMode: boolean;
   constructor(props: Props) {
     super(props);
 
     this.childContainerId = `divPanel-${uuidv4()}`;
+    this.editMode = isEditMode();
   }
 
   onClear = () => {
@@ -61,8 +65,6 @@ export class DivPanelParent extends Component<Props> {
       }
     }
 
-    console.log('divElement', divElement.innerHTML);
-
     return {
       html: divElement.innerHTML,
       meta,
@@ -85,7 +87,7 @@ export class DivPanelParent extends Component<Props> {
 
     return (
       <>
-        <DivPanelChild id={this.childContainerId} html={html} meta={meta} links={links} scripts={scripts} imports={imports} data={data} />
+        <DivPanelChild id={this.childContainerId} command={command} html={html} meta={meta} links={links} scripts={scripts} imports={imports} data={data} />
       </>
     );
   }
