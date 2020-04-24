@@ -14,7 +14,7 @@
     "@grafana/data": "next",
     "@grafana/runtime": "next",
     "@grafana/toolkit": "next",
-    "@grafana/ui": "next",
+    "@grafana/ui": "canary",
     "@monaco-editor/react": "3.3.0",
     "@types/lodash": "4.14.149",
     "@types/react": "16.9.22",

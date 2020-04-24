@@ -11,6 +11,7 @@ interface Props {
   imports: HTMLScriptElement[];
   links: HTMLLinkElement[];
   data: PanelData;
+  command: string;
 }
 
 interface State {
@@ -23,6 +24,7 @@ interface State {
 
 interface ScriptArgs {
   data?: DataFrame[];
+  command: string;
   code: HTMLScriptElement;
 }
 
@@ -84,15 +86,24 @@ const run = (args: ScriptArgs): any => {
   try {
     const f = new Function(
       'data',
+      'command',
       `
+      if (typeof onDivPanelEnterEditMode === 'function' && command === 'enterEditMode') {
+        onDivPanelEnterEditMode();
+      }
+
       ${args.code.innerText}
+
+      if (typeof onDivPanelExitEditMode === 'function' && command === 'exitEditMode') {
+        onDivPanelExitEditMode();
+      }
 
       if (data && typeof onDivPanelDataUpdate === 'function') {
         onDivPanelDataUpdate(data);
       }
     `
     );
-    f(args.data);
+    f(args.data, args.command);
   } catch (ex) {
     throw ex;
   }
@@ -110,6 +121,7 @@ const divStyle = {
 export class DivPanelChild extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    
     this.state = {
       metaLoaded: false,
       scriptsLoaded: false,
@@ -129,7 +141,6 @@ export class DivPanelChild extends Component<Props, State> {
       await loadCSS(i);
     }
 
-    console.log('imports', imports);
     let container = document.getElementById(id)?.parentElement;
     if (container) {
       container = container.parentElement?.parentElement?.parentElement;
@@ -175,12 +186,13 @@ export class DivPanelChild extends Component<Props, State> {
   }
 
   executeScripts = (scripts: HTMLScriptElement[]) => {
+    const { command } = this.props;
     const { state, series } = this.props.data;
     const { importsLoaded, scriptsLoaded, linksLoaded } = this.state;
     window.requestAnimationFrame(() => {
       if (state === 'Done' && scriptsLoaded && importsLoaded && linksLoaded) {
         for (const s of scripts) {
-          run({ code: s, data: series });
+          run({ code: s, command, data: series });
         }
       }
     });
