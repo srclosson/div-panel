@@ -17,7 +17,7 @@ export class DivMonacoEditor extends Component<Props, State> {
 
     this.state = {
       editorVisible: false,
-    }
+    };
     this.getEditorValue = undefined;
   }
 
@@ -40,8 +40,8 @@ export class DivMonacoEditor extends Component<Props, State> {
   onOpenEditor = () => {
     this.setState({
       editorVisible: true,
-    })
-  }
+    });
+  };
 
   onHtmlEditorDidMount = (getEditorValue: any) => {
     this.getEditorValue = getEditorValue;
@@ -63,8 +63,8 @@ export class DivMonacoEditor extends Component<Props, State> {
   onCloseClick = () => {
     this.setState({
       editorVisible: false,
-    })
-  }
+    });
+  };
 
   onRunClick = () => {
     const { onOptionsChange } = this.props;
@@ -73,33 +73,33 @@ export class DivMonacoEditor extends Component<Props, State> {
       command: 'render',
       content: this.getEditorValue(),
     });
-  }
+  };
 
   onRender = (): JSX.Element => {
     const { editorVisible } = this.state;
     const { content } = this.props.options;
     return (
       <>
-        {editorVisible &&
-        <Drawer
-          width="50%"
-          title="Div Panel Code Editor"
-          expandable
-          onClose={() => {
-            this.setState({
-              editorVisible: false,
-            });
-          }}
-        >
-          <div style={{width: "100%", height: "85vh"}}>
-            <Editor language="html" value={content} editorDidMount={this.onHtmlEditorDidMount} theme={'dark'} />
-            <Button onClick={this.onRunClick}>Run</Button>
-            <Button onClick={this.onClearClick}>Clear</Button>
-            <Button onClick={this.onApplyClick}>Apply</Button>
-            <Button onClick={this.onCloseClick}>Close</Button>
-          </div>
-        </Drawer>
-      || <Button onClick={this.onOpenEditor}>Open Editor</Button>}
+        {(editorVisible && (
+          <Drawer
+            width="50%"
+            title="Div Panel Code Editor"
+            expandable
+            onClose={() => {
+              this.setState({
+                editorVisible: false,
+              });
+            }}
+          >
+            <div style={{ width: '100%', height: '85vh' }}>
+              <Editor language="html" value={content} editorDidMount={this.onHtmlEditorDidMount} theme={'dark'} />
+              <Button onClick={this.onRunClick}>Run</Button>
+              <Button onClick={this.onClearClick}>Clear</Button>
+              <Button onClick={this.onApplyClick}>Apply</Button>
+              <Button onClick={this.onCloseClick}>Close</Button>
+            </div>
+          </Drawer>
+        )) || <Button onClick={this.onOpenEditor}>Open Editor</Button>}
       </>
     );
   };

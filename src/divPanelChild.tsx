@@ -121,7 +121,7 @@ const divStyle = {
 export class DivPanelChild extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    
+
     this.state = {
       metaLoaded: false,
       scriptsLoaded: false,

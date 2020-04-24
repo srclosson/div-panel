@@ -87,7 +87,16 @@ export class DivPanelParent extends Component<Props> {
 
     return (
       <>
-        <DivPanelChild id={this.childContainerId} command={command} html={html} meta={meta} links={links} scripts={scripts} imports={imports} data={data} />
+        <DivPanelChild
+          id={this.childContainerId}
+          command={command}
+          html={html}
+          meta={meta}
+          links={links}
+          scripts={scripts}
+          imports={imports}
+          data={data}
+        />
       </>
     );
   }

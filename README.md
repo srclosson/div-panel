@@ -1,5 +1,7 @@
 # Grafana DIV Panel
 
+![](https://raw.githubusercontent.com/srclosson/grafana-div-panel/master/src/img/screenshot1.png)
+
 The div panel is a generic panel allowing you to specify your own html and javascript
 Just write your html the same way you normally would:
 
@@ -12,20 +14,29 @@ Just write your html the same way you normally would:
 
     <script>
         function onDivPanelInit() {
-            console.log("I am in init");
+          console.log("I am in init");
+        }
+
+        function onDivPanelEnterEditMode() {
+          console.log("I entered edit mode");
+        }
+
+        function onDivPanelExitEditMode() {
+          console.log("I exited edit mode");
         }
 
         function onDivPanelDataUpdate(data) {
-            console.log("I have data", data);
+          console.log("I have data", data);
         }
         
-        console.log("from script");
+        console.log("Hello from my script!");
     </script>
   </body>
 </html>
 ```
 
-There are two callbacks provided. The first is only called on init `onDivPanelInit`
-The second is onDivPanelDataUpdate, and it is called with the data retrieved from the datasource and is called `onDivPanelDataUpdate`.
-
-Examples coming soon. Please share your creations!
+There are four callbacks provided. 
+1. `onDivPanelInit`: Called when your panel is contructed and you html is available.
+2. `onDivPanelDataUpdate`: Called with the data retrieved from the datasource.
+3. `onDivPanelEnterEditMode`: Called whenever you enter edit mode.
+4. `onDivPanelExitEditMode`: Called whenever you exit edit mode.
