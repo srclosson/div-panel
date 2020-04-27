@@ -2,31 +2,47 @@ import { PanelProps } from '@grafana/data';
 import { v4 as uuidv4 } from 'uuid';
 
 export const defaultContent = `<html>
-  <body>
-    <div>
-        Hello Div Panel
-    </div>
+<body>
+  <div>
+      Hello Div Panel
+  </div>
 
-    <script>
-        function onDivPanelInit() {
-          console.log("I am in init");
-        }
+  <script>
+      /**
+       * @param elem The div element containing your div panel
+       */
+      function onDivPanelInit(elem) {
+        console.log("I am in init", elem);
+      }
 
-        function onDivPanelEnterEditMode(elem) {
-          console.log("I entered edit mode");
-        }
+      /**
+       * @param elem The div element containing your panel
+       * @param content The content set by the editor you used while in edit mode
+       */
+      function onDivPanelEnterEditMode(elem, content) {
+        console.log("I entered edit mode", elem, content);
+      }
 
-        function onDivPanelExitEditMode() {
-          console.log("I exited edit mode");
-        }
+      /**
+       * @param elem The div element containing your div panel
+       * @returns The html content to save and be loaded in onDivPanelEnterEditMode
+       */
+      function onDivPanelExitEditMode(elem) {
+        console.log("I exited edit mode", elem);
+        let html = '<p>Hello</p>';
+        return html;
+      }
 
-        function onDivPanelDataUpdate(data) {
-          console.log("I have data", data);
-        }
-        
-        console.log("Hello from my script!");
-    </script>
-  </body>
+      /**
+       * @param data The data retrieved from your panel data config
+       */
+      function onDivPanelDataUpdate(data) {
+        console.log("I have data", data);
+      }
+      
+      console.log("Hello from my script!");
+  </script>
+</body>
 </html>`;
 
 export interface DivPanelOptions {

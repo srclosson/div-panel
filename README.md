@@ -13,18 +13,34 @@ Just write your html the same way you normally would:
     </div>
 
     <script>
-        function onDivPanelInit() {
-          console.log("I am in init");
+        /**
+         * @param elem The div element containing your div panel
+         */
+        function onDivPanelInit(elem) {
+          console.log("I am in init", elem);
         }
 
-        function onDivPanelEnterEditMode() {
-          console.log("I entered edit mode");
+        /**
+         * @param elem The div element containing your panel
+         * @param content The content set by the editor you used while in edit mode
+         */
+        function onDivPanelEnterEditMode(elem, content) {
+          console.log("I entered edit mode", elem, content);
         }
 
-        function onDivPanelExitEditMode() {
-          console.log("I exited edit mode");
+        /**
+         * @param elem The div element containing your div panel
+         * @returns The html content to save and be loaded in onDivPanelEnterEditMode
+         */
+        function onDivPanelExitEditMode(elem) {
+          console.log("I exited edit mode", elem);
+          let html = '<p>Hello</p>';
+          return html;
         }
 
+        /**
+         * @param data The data retrieved from your panel data config
+         */
         function onDivPanelDataUpdate(data) {
           console.log("I have data", data);
         }
