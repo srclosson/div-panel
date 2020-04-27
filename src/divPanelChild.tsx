@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-import { PanelData, DataFrame } from '@grafana/data';
+import { PanelData } from '@grafana/data';
 import { css } from 'emotion';
-import postscribe from 'postscribe';
+import { loadMeta, loadCSS, load, init, run } from 'utils/functions';
+import { getDivPanelState, setDivPanelState } from './types';
+import tracker from 'utils/editmode';
 
 interface Props {
   id: string;
   html: string;
+  onChange?: (editContent: string[]) => void;
+  editContent: string[];
   meta: HTMLMetaElement[];
   scripts: HTMLScriptElement[];
   imports: HTMLScriptElement[];
@@ -15,99 +19,8 @@ interface Props {
 }
 
 interface State {
-  metaLoaded: boolean;
-  scriptsLoaded: boolean;
-  importsLoaded: boolean;
-  linksLoaded: boolean;
   divLoaded: boolean;
 }
-
-interface ScriptArgs {
-  data?: DataFrame[];
-  command: string;
-  code: HTMLScriptElement;
-}
-
-const init = (code: HTMLScriptElement): any => {
-  try {
-    const f = new Function(`
-      ${code.innerText}
-      if (typeof onDivPanelInit === 'function') {
-        onDivPanelInit();
-      }
-    `);
-    f();
-  } catch (ex) {
-    throw ex;
-  }
-};
-
-const loadMeta = (elem: HTMLMetaElement) => {
-  return new Promise(resolve => {
-    elem.onload = () => {
-      resolve(elem);
-    };
-    document.head.appendChild(elem);
-  });
-};
-
-const loadCSS = (elem: HTMLLinkElement) => {
-  return new Promise(resolve => {
-    elem.onload = () => {
-      resolve(elem);
-    };
-    document.head.appendChild(elem);
-  });
-};
-
-const load = async (elem: HTMLScriptElement, container: HTMLElement) => {
-  try {
-    return new Promise(resolve => {
-      postscribe(container, elem.outerHTML, {
-        done: () => {
-          const url = elem.getAttribute('src');
-          if (url) {
-            fetch(url, { mode: 'no-cors' })
-              .then((response: Response) => response.text())
-              .then(code => {
-                new Function(code)();
-                resolve(elem);
-              });
-          }
-        },
-      });
-    });
-  } catch (ex) {
-    console.log('caught error', ex);
-  }
-};
-
-const run = (args: ScriptArgs): any => {
-  try {
-    const f = new Function(
-      'data',
-      'command',
-      `
-      if (typeof onDivPanelEnterEditMode === 'function' && command === 'enterEditMode') {
-        onDivPanelEnterEditMode();
-      }
-
-      ${args.code.innerText}
-
-      if (typeof onDivPanelExitEditMode === 'function' && command === 'exitEditMode') {
-        onDivPanelExitEditMode();
-      }
-
-      if (data && typeof onDivPanelDataUpdate === 'function') {
-        onDivPanelDataUpdate(data);
-      }
-    `
-    );
-    f(args.data, args.command);
-  } catch (ex) {
-    throw ex;
-  }
-};
 
 const divStyle = {
   wrapper: css`
@@ -119,22 +32,41 @@ const divStyle = {
 };
 
 export class DivPanelChild extends Component<Props, State> {
+  editModeHtml: Array<string | undefined>;
+
   constructor(props: Props) {
     super(props);
 
+    this.editModeHtml = [];
     this.state = {
-      metaLoaded: false,
-      scriptsLoaded: false,
-      importsLoaded: false,
-      linksLoaded: false,
       divLoaded: false,
     };
   }
 
   async componentDidMount() {
+    await this.loadDependencies();
+    this.panelUpdate();
+  }
+
+  async componentDidUpdate() {
+    await this.loadDependencies();
+    this.panelUpdate();
+  }
+
+  async loadDependencies() {
+    const { divLoaded } = this.state;
     const { id, imports, links, meta } = this.props;
-    for (const i of meta) {
-      await loadMeta(i);
+    const { metaLoaded } = getDivPanelState();
+
+    if (!metaLoaded) {
+      for (const i of meta) {
+        await loadMeta(i);
+      }
+
+      setDivPanelState({
+        ...getDivPanelState(),
+        metaLoaded: true,
+      });
     }
 
     for (const i of links) {
@@ -155,17 +87,6 @@ export class DivPanelChild extends Component<Props, State> {
       }
     }
 
-    this.setState({
-      ...this.state,
-      importsLoaded: true,
-      linksLoaded: true,
-    });
-  }
-
-  componentDidUpdate() {
-    const { importsLoaded, scriptsLoaded, linksLoaded, divLoaded } = this.state;
-    const { id, scripts } = this.props;
-
     if (!divLoaded) {
       const elem = document.getElementById(id);
       if (elem) {
@@ -175,35 +96,57 @@ export class DivPanelChild extends Component<Props, State> {
         });
       }
     }
+  }
 
-    if (divLoaded && importsLoaded && linksLoaded && !scriptsLoaded) {
-      scripts.forEach(async i => await init(i));
-      this.setState({
-        ...this.state,
+  panelUpdate() {
+    const { divLoaded } = this.state;
+    const { scriptsLoaded } = getDivPanelState();
+    const { id, command, scripts, editContent, onChange } = this.props;
+    const { state, series } = this.props.data;
+
+    const elem = document.getElementById(id);
+
+    if (divLoaded && elem && !scriptsLoaded) {
+      scripts.forEach(async i => await init(elem?.children, i));
+      setDivPanelState({
+        ...getDivPanelState(),
         scriptsLoaded: true,
       });
     }
+
+    if (state === 'Done' && elem && scriptsLoaded) {
+      tracker.update();
+      const editState = tracker.get();
+      const newEditContent = scripts.map((s: HTMLScriptElement) => {
+        return run({
+          code: s,
+          elem: elem?.children,
+          editState,
+          editMode: getDivPanelState().editMode,
+          editContent,
+          command,
+          data: series,
+        });
+      });
+
+      const cleanEditContent: string[] = [];
+      newEditContent.forEach((ec: string | undefined) => {
+        if (ec) {
+          cleanEditContent.push(ec);
+        }
+      });
+
+      if (onChange && editState.prev && !editState.curr) {
+        onChange(cleanEditContent);
+      }
+    }
   }
 
-  executeScripts = (scripts: HTMLScriptElement[]) => {
-    const { command } = this.props;
-    const { state, series } = this.props.data;
-    const { importsLoaded, scriptsLoaded, linksLoaded } = this.state;
-    window.requestAnimationFrame(() => {
-      if (state === 'Done' && scriptsLoaded && importsLoaded && linksLoaded) {
-        for (const s of scripts) {
-          run({ code: s, command, data: series });
-        }
-      }
-    });
-  };
-
   render() {
-    const { id, html, scripts } = this.props;
-    this.executeScripts(scripts);
+    const { id, html } = this.props;
     return (
       <>
-        <div id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: html }}></div>
+        <div key={id} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: html }}></div>
       </>
     );
   }
