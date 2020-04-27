@@ -1,0 +1,45 @@
+<!--
+  This example displays a ckeditor in edit mode, allowing you to edit your panel layout in a GUI. Then, when you exit
+  edit mode, the HTML produced by ckeditor is displayed.
+-->
+<html>
+  <head>
+    <script src="https://cdn.ckeditor.com/ckeditor5/18.0.0/classic/ckeditor.js"></script>
+  </head>
+  <body>
+    <div id="ckeditor" contenteditable="false"></div>
+    <script>
+        function onDivPanelInit(elem) {
+          console.log("I am in init", );
+        }
+        function onDivPanelEnterEditMode(elem, content) {
+          console.log("I entered edit mode", elem, window.ckedit);
+          if (!window.ckedit) {
+            ClassicEditor.create(elem.item(0))
+            .then(editor => {
+              editor.setData(content);
+              window.ckedit = editor;
+            })
+            .catch(error => {
+              console.error( error );
+            });
+          }
+        }
+        function onDivPanelExitEditMode(elem) {
+          let html = '';
+          if (window.ckedit) {
+            html = window.ckedit.getData();
+            window.ckedit.destroy();
+            window.ckedit = null;
+          }
+          
+          console.log("I exited edit mode", html);
+          return html;
+        }
+        function onDivPanelDataUpdate(data) {
+          console.log("I have data", data);
+        }
+        console.log("Hello from my script!", this.command);
+    </script>
+  </body>
+</html>

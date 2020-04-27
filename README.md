@@ -51,8 +51,19 @@ Just write your html the same way you normally would:
 </html>
 ```
 
+## Callbacks
 There are four callbacks provided. 
 1. `onDivPanelInit`: Called when your panel is contructed and your html is available.
 2. `onDivPanelDataUpdate`: Called with the data retrieved from the datasource.
 3. `onDivPanelEnterEditMode`: Called whenever you enter edit mode.
 4. `onDivPanelExitEditMode`: Called whenever you exit edit mode.
+
+## Building
+To build:
+1. Clone this repo
+2. `yarn install`
+3. `yarn dev` (for a dev build) or `yarn build` (for a prod build that is minified)
+4. Restart grafana
+
+## Examples
+See the examples in the examples folder
