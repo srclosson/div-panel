@@ -168,6 +168,9 @@ export const parseHtml = (content: string) => {
       case 'LINK':
         links.push(head.children[i].cloneNode(true) as HTMLLinkElement);
         break;
+      case 'STYLE':
+        divElement.appendChild(head.children[i].cloneNode(true));
+        break;
       case 'SCRIPT':
         imports.push(head.children[i].cloneNode(true) as HTMLScriptElement);
         break;
@@ -181,6 +184,9 @@ export const parseHtml = (content: string) => {
       case 'SCRIPT':
         scripts.push(body.children[i].cloneNode(true) as HTMLScriptElement);
         body.children[i].remove();
+        break;
+      case 'STYLE':
+        divElement.appendChild(body.children[i].cloneNode(true));
         break;
       default:
         divElement.appendChild(body.children[i].cloneNode(true));

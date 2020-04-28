@@ -43,13 +43,16 @@ export class DivPanelChild extends Component<Props, State> {
     };
   }
 
-  async componentDidMount() {
-    await this.loadDependencies();
-    this.panelUpdate();
+  componentDidMount() {
+    this.loadDependencies().then(() => this.panelUpdate);
   }
 
-  async componentDidUpdate() {
-    await this.loadDependencies();
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  componentDidUpdate() {
+    this.loadDependencies();
     this.panelUpdate();
   }
 
@@ -100,11 +103,12 @@ export class DivPanelChild extends Component<Props, State> {
 
   panelUpdate() {
     const { divLoaded } = this.state;
-    const { scriptsLoaded } = getDivPanelState();
+    const { editMode, scriptsLoaded } = getDivPanelState();
     const { id, command, scripts, editContent, onChange } = this.props;
     const { state, series } = this.props.data;
 
     const elem = document.getElementById(id);
+    tracker.update();
 
     if (divLoaded && elem && !scriptsLoaded) {
       scripts.forEach(async i => await init(elem?.children, i));
@@ -114,15 +118,14 @@ export class DivPanelChild extends Component<Props, State> {
       });
     }
 
-    if (state === 'Done' && elem && scriptsLoaded) {
-      tracker.update();
+    if (state === 'Done' && elem) {
       const editState = tracker.get();
       const newEditContent = scripts.map((s: HTMLScriptElement) => {
         return run({
           code: s,
           elem: elem?.children,
           editState,
-          editMode: getDivPanelState().editMode,
+          editMode,
           editContent,
           command,
           data: series,
@@ -146,7 +149,7 @@ export class DivPanelChild extends Component<Props, State> {
     const { id, html } = this.props;
     return (
       <>
-        <div key={id} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: html }}></div>
+        <div key={`${id}-achild`} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: html }}></div>
       </>
     );
   }

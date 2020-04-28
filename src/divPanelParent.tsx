@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { DivPanelChild } from './divPanelChild';
-import { DivPanelProps, getDivPanelState } from './types';
+import { DivPanelProps, getDivPanelState, setDivPanelState } from './types';
 import { parseHtml } from 'utils/functions';
 
 interface Props extends DivPanelProps {}
@@ -14,6 +14,10 @@ export class DivPanelParent extends Component<Props> {
     const divState = getDivPanelState();
     if (divState.editMode) {
       this.id = `divPanel-edit-${divState.id}`;
+      setDivPanelState({
+        ...divState,
+        editId: this.id,
+      });
     } else {
       this.id = `divPanel-${divState.id}`;
     }
@@ -56,7 +60,7 @@ export class DivPanelParent extends Component<Props> {
       <>
         {editContentElements}
         <DivPanelChild
-          key={this.id}
+          key={`${this.id}-aparent`}
           id={this.id}
           onChange={this.onChangeChild}
           editContent={editContent}
