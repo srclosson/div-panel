@@ -4,11 +4,13 @@ import { css } from 'emotion';
 import { loadMeta, loadCSS, load, init, run } from 'utils/functions';
 import { getDivPanelState, setDivPanelState } from './types';
 import tracker from 'utils/editmode';
+const Handlebars = require("handlebars");
 
 interface Props {
   id: string;
   html: string;
   onChange?: (editContent: string[]) => void;
+  editMode: boolean;
   editContent: string[];
   meta: HTMLMetaElement[];
   scripts: HTMLScriptElement[];
@@ -146,10 +148,36 @@ export class DivPanelChild extends Component<Props, State> {
   }
 
   render() {
-    const { id, html } = this.props;
+    const { id, html, editContent, editMode } = this.props;
+    const { series } = this.props.data;
+
+    let template, newHtml;
+    try {
+      template = Handlebars.compile(html)
+      newHtml = template(series);
+    } catch(ex) {
+      console.log("could not compile", ex);
+      newHtml = html
+    }
+
+    let editContentElements: JSX.Element[] = [];
+    if (editContent && editContent.length && !editMode) {
+      editContentElements = editContent.map((html: string, index: number) => {
+        let template, newHtml;
+        try {
+          template = Handlebars.compile(html)
+          newHtml = template(series);
+        } catch(ex) {
+          console.log("could not compile", ex);
+          newHtml = html
+        }
+        return <div key={`${id}-edit-${index}`} id={`${id}-edit-${index}`} dangerouslySetInnerHTML={{ __html: newHtml || '' }}></div>;
+      });
+    }
     return (
       <>
-        <div key={`${id}-achild`} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: html }}></div>
+        {editContentElements}
+        <div key={`${id}-achild`} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: newHtml }}></div>
       </>
     );
   }

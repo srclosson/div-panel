@@ -26,7 +26,8 @@
     "kind-of": "6.0.3",
     "serialize-javascript": "2.1.1",
     "prop-types": "15.5.8",
-    "@types/prop-types": "15.5.8"
+    "@types/prop-types": "15.5.8",
+    "handlebars": "4.7.6"
   },
   "dependencies": {
     "@types/jquery": "^3.3.34",

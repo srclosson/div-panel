@@ -49,20 +49,14 @@ export class DivPanelParent extends Component<Props> {
       return <div>You're code has been cleared</div>;
     }
     const { html, meta, links, scripts, imports } = parseHtml(content);
-    let editContentElements: JSX.Element[] = [];
-    if (editContent && editContent.length && !editMode) {
-      editContentElements = editContent.map((html: string, index: number) => {
-        return <div key={`${this.id}-edit-${index}`} dangerouslySetInnerHTML={{ __html: html || '' }}></div>;
-      });
-    }
 
     return (
       <>
-        {editContentElements}
         <DivPanelChild
           key={`${this.id}-aparent`}
           id={this.id}
           onChange={this.onChangeChild}
+          editMode={editMode}
           editContent={editContent}
           command={command}
           html={html}
