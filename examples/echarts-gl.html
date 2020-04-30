@@ -1,0 +1,135 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/echarts.min.js?_v_=1584690369972"></script>
+  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts-stat/ecStat.min.js?_v_=1584690369972"></script>
+  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/map/js/china.js?_v_=1584690369972"></script>
+  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/map/js/world.js?_v_=1584690369972"></script>
+  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/extension/dataTool.js?_v_=1584690369972"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@1.1.1/dist/echarts-gl.min.js"></script>
+</head>
+<body>
+  <div id="container" style="height: 100%"></div>
+
+  <script>
+      var dataCount = 0;
+      window.ROOT_PATH = 'https://echarts.apache.org/examples/';
+      var CHUNK_COUNT = 230;
+
+      function fetchData(idx) {
+          if (idx >= CHUNK_COUNT) {
+              return;
+          }
+          var dataURL = ROOT_PATH + 'data/asset/data/gps/gps_'+ idx + '.bin';
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', dataURL, true);
+          xhr.responseType = 'arraybuffer';
+
+          xhr.onload = function (e) {
+              var rawData = new Int32Array(this.response);
+              var data = new Float32Array(rawData.length);
+              var addedDataCount = rawData.length / 2;
+              for (var i = 0; i < rawData.length; i += 2) {
+                  data[i] = rawData[i+1] / 1e7;
+                  data[i+1] = rawData[i] / 1e7;
+              }
+
+              myChart.appendData({
+                  seriesIndex: 0,
+                  data: data
+              });
+
+              fetchData(idx + 1);
+          }
+
+          xhr.send();
+      }
+      /**
+       * @param elem The div element containing your div panel
+       */
+      function onDivPanelInit(elem) {
+        console.log("I am in init", elem);
+        window.myChart = echarts.init(elem.item(0));
+        
+        option = {
+            backgroundColor: '#000',
+            title: {
+                text: '10000000 GPS Points',
+                    left: 'center',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            geo: {
+                map: 'world',
+                roam: true,
+                label: {
+                    emphasis: {
+                        show: false
+                    }
+                },
+                silent: true,
+                itemStyle: {
+                    normal: {
+                        areaColor: '#323c48',
+                        borderColor: '#111'
+                    },
+                    emphasis: {
+                        areaColor: '#2a333d'
+                    }
+                }
+            },
+            series: [{
+                name: '弱',
+                type: 'scatterGL',
+                progressive: 1e6,
+                coordinateSystem: 'geo',
+                symbolSize: 1,
+                zoomScale: 0.002,
+                blendMode: 'lighter',
+                large: true,
+                itemStyle: {
+                    color: 'rgb(20, 15, 2)'
+                },
+                postEffect: {
+                    enable: true
+                },
+                silent: true,
+                dimensions: ['lng', 'lat'],
+                data: new Float32Array()
+            }]
+        };
+
+        fetchData(0);
+
+        if (option && typeof option === "object") {
+            window.myChart.setOption(option, true);
+        }    
+      }
+
+      /**
+       * @param elem The div element containing your panel
+       * @param content The content set by the editor you used while in edit mode
+       */
+      function onDivPanelEnterEditMode(elem, content) {
+        console.log("I entered edit mode", elem, content);
+      }
+
+      /**
+       * @param elem The div element containing your div panel
+       * @returns The html content to save and be loaded in onDivPanelEnterEditMode
+       */
+      function onDivPanelExitEditMode(elem) {
+        console.log("I exited edit mode", elem);
+      }
+
+      /**
+       * @param data The data retrieved from your panel data config
+       */
+      function onDivPanelDataUpdate(data) {
+        console.log("I have data", data);
+      }
+      
+      console.log("Hello from my script!");
+  </script>
+</body>
+</html>

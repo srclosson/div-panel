@@ -13,18 +13,18 @@ export class DivPanelParent extends Component<Props> {
 
     const divState = getDivPanelState();
     if (divState.editMode) {
-      this.id = `divPanel-edit-${divState.id}`;
+      this.id = `divPanel-edit-${props.id}`;
       setDivPanelState({
         ...divState,
         editId: this.id,
       });
     } else {
-      this.id = `divPanel-${divState.id}`;
+      this.id = `divPanel-${props.id}`;
     }
   }
 
   onClear = () => {
-    const elem = document.getElementById(getDivPanelState().id);
+    const elem = document.getElementById(this.id);
     if (elem) {
       ReactDOM.unmountComponentAtNode(elem);
     }

@@ -1,6 +1,7 @@
 # Grafana DIV Panel
 
 ![](https://raw.githubusercontent.com/srclosson/grafana-div-panel/master/src/img/screenshot1.png)
+![](https://raw.githubusercontent.com/srclosson/grafana-div-panel/master/src/img/echarts-gl-gps.png)
 
 The div panel is a generic panel allowing you to specify your own html and javascript
 Just write your html the same way you normally would:

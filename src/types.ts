@@ -48,17 +48,20 @@ export const defaultContent = `<html>
 export interface DivPanelOptions {
   content: string;
   editContent: string[];
+  editCss: string[];
+  id: string;
 }
 
 export const defaults: DivPanelOptions = {
+  id: uuidv4(),
   content: defaultContent,
   editContent: [],
+  editCss: [],
 };
 
 export interface DivPanelProps extends PanelProps<DivPanelOptions> {}
 
 export interface DivPanelState {
-  id: string;
   editId: string;
   command: string;
   editMode: boolean;
@@ -71,7 +74,6 @@ export interface DivPanelState {
 
 let pathName = window.location.pathname;
 const defaultDivPanelState = {
-  id: uuidv4(),
   editId: '',
   command: '',
   editMode: false,
@@ -88,7 +90,7 @@ export const setDivPanelState = (state: DivPanelState) => {
 };
 
 export const getDivPanelState = (): DivPanelState => {
-  if (pathName !== window.location.pathname) {
+  if (pathName != window.location.pathname) {
     console.log('We have switched dashboards');
     pathName = window.location.pathname;
     divPanelState = { ...defaultDivPanelState };

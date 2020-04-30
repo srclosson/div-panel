@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { PanelData } from '@grafana/data';
 import { css } from 'emotion';
 import { loadMeta, loadCSS, load, init, run } from 'utils/functions';
-import { getDivPanelState, setDivPanelState } from './types';
+import { getDivPanelState } from './types';
 import tracker from 'utils/editmode';
 const Handlebars = require("handlebars");
 
@@ -21,7 +21,7 @@ interface Props {
 }
 
 interface State {
-  divLoaded: boolean;
+  depsLoaded: boolean;
 }
 
 const divStyle = {
@@ -35,18 +35,19 @@ const divStyle = {
 
 export class DivPanelChild extends Component<Props, State> {
   editModeHtml: Array<string | undefined>;
-
+  scriptsLoaded: boolean;
   constructor(props: Props) {
     super(props);
 
+    this.scriptsLoaded = false;
     this.editModeHtml = [];
     this.state = {
-      divLoaded: false,
+      depsLoaded: false,
     };
   }
 
   componentDidMount() {
-    this.loadDependencies().then(() => this.panelUpdate);
+    this.loadDependencies(true);
   }
 
   shouldComponentUpdate() {
@@ -54,73 +55,57 @@ export class DivPanelChild extends Component<Props, State> {
   }
 
   componentDidUpdate() {
-    this.loadDependencies();
+    this.loadDependencies(false);
     this.panelUpdate();
   }
 
-  async loadDependencies() {
-    const { divLoaded } = this.state;
+  loadDependencies(refreshState: boolean) {
     const { id, imports, links, meta } = this.props;
-    const { metaLoaded } = getDivPanelState();
-
-    if (!metaLoaded) {
-      for (const i of meta) {
-        await loadMeta(i);
-      }
-
-      setDivPanelState({
-        ...getDivPanelState(),
-        metaLoaded: true,
-      });
+    let promises: Promise<any>[] = []
+    for (const i of meta) {
+      promises.push(loadMeta(i));
     }
-
+    
     for (const i of links) {
-      await loadCSS(i);
+      promises.push(loadCSS(i));
     }
-
+    
     let container = document.getElementById(id)?.parentElement;
     if (container) {
       container = container.parentElement?.parentElement?.parentElement;
     }
     if (container) {
       for (const i of imports) {
-        try {
-          await load(i, container);
-        } catch (ex) {
-          throw ex;
-        }
+        promises.push(load(i, container));
       }
     }
 
-    if (!divLoaded) {
-      const elem = document.getElementById(id);
-      if (elem) {
+    return Promise.all(promises)
+    .then(() => {
+      if (refreshState) {
         this.setState({
-          ...this.state,
-          divLoaded: true,
+          depsLoaded: true,
         });
       }
-    }
+    });
   }
 
   panelUpdate() {
-    const { divLoaded } = this.state;
-    const { editMode, scriptsLoaded } = getDivPanelState();
+    const { depsLoaded } = this.state;
     const { id, command, scripts, editContent, onChange } = this.props;
+    const { editMode } = getDivPanelState();  
     const { state, series } = this.props.data;
 
+    console.log("child element", id);
     const elem = document.getElementById(id);
     tracker.update();
 
-    if (divLoaded && elem && !scriptsLoaded) {
-      scripts.forEach(async i => await init(elem?.children, i));
-      setDivPanelState({
-        ...getDivPanelState(),
-        scriptsLoaded: true,
-      });
-    }
-
     if (state === 'Done' && elem) {
+      if (depsLoaded && !this.scriptsLoaded) {
+        scripts.forEach(async i => await init(elem?.children, i));
+        this.scriptsLoaded = true;
+      }
+  
       const editState = tracker.get();
       const newEditContent = scripts.map((s: HTMLScriptElement) => {
         return run({

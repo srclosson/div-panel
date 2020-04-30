@@ -32,33 +32,33 @@ export const init = (elem: HTMLCollection, code: HTMLScriptElement): any => {
   }
 };
 
-export const loadMeta = (elem: HTMLMetaElement) => {
+export const loadMeta = (elem: HTMLMetaElement): Promise<any> => {
   return new Promise(resolve => {
-    elem.onload = () => {
-      resolve(elem);
-    };
-    document.head.appendChild(elem);
+    postscribe(document.head, elem.outerHTML, {
+      done: () => resolve(elem),
+    });
   });
 };
 
-export const loadCSS = (elem: HTMLLinkElement) => {
+export const loadCSS = (elem: HTMLLinkElement): Promise<any> => {
   return new Promise(resolve => {
     const href = elem.getAttribute('href');
     if (href && !linksLoaded[href]) {
-      elem.onload = () => {
-        linksLoaded[href] = true;
-        resolve(elem);
-      };
-      document.head.appendChild(elem);
+      postscribe(document.head, elem.outerHTML, {
+        done: () => {
+          linksLoaded[href] = true;
+          resolve(elem);
+        },
+      })
     } else {
       resolve(elem);
-    }
+    }  
   });
 };
 
-export const load = async (elem: HTMLScriptElement, container: HTMLElement) => {
+export const load = async (elem: HTMLScriptElement, container: HTMLElement): Promise<any> => {
   try {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const url = elem.getAttribute('src');
       if (url && !scriptsLoaded[url]) {
         postscribe(container, elem.outerHTML, {
@@ -66,11 +66,17 @@ export const load = async (elem: HTMLScriptElement, container: HTMLElement) => {
             fetch(url, { mode: 'no-cors' })
               .then((response: Response) => response.text())
               .then(code => {
-                new Function(code)();
+                let res = new Function(code)();
                 scriptsLoaded[url] = true;
-                resolve(elem);
+                resolve(res);
+              })
+              .catch(err => {
+                reject(err);
               });
           },
+          error: (err: any) => {
+            reject(err);
+          }
         });
       } else {
         resolve(elem);
