@@ -6,11 +6,11 @@ export const divPanelChangedHandler = (
   prevPluginId: string,
   prevOptions: any
 ): Partial<DivPanelOptions> => {
-  console.log("DIV PANEL CHANGED!!! panel", panel);
+  console.log('DIV PANEL CHANGED!!! panel', panel);
   return prevOptions;
 };
 
 export const divPanelMigrationHandler = (panel: PanelModel<Partial<DivPanelOptions>> | any): Partial<DivPanelOptions> => {
-  console.log("DIV PANEL MIGRATION", panel);
+  console.log('DIV PANEL MIGRATION', panel);
   return panel.options;
-}
+};

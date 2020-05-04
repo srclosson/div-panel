@@ -49,10 +49,10 @@ export const loadCSS = (elem: HTMLLinkElement): Promise<any> => {
           linksLoaded[href] = true;
           resolve(elem);
         },
-      })
+      });
     } else {
       resolve(elem);
-    }  
+    }
   });
 };
 
@@ -76,7 +76,7 @@ export const load = async (elem: HTMLScriptElement, container: HTMLElement): Pro
           },
           error: (err: any) => {
             reject(err);
-          }
+          },
         });
       } else {
         resolve(elem);
@@ -169,16 +169,21 @@ export const parseHtml = (content: string) => {
   for (let i = 0; i < head.children.length; i++) {
     switch (head.children[i].nodeName) {
       case 'META':
-        meta.push(head.children[i].cloneNode(true) as HTMLMetaElement);
+        document.head.appendChild(head.children[i].cloneNode(true) as HTMLMetaElement);
         break;
       case 'LINK':
-        links.push(head.children[i].cloneNode(true) as HTMLLinkElement);
+        document.head.appendChild(head.children[i].cloneNode(true) as HTMLLinkElement);
         break;
       case 'STYLE':
-        divElement.appendChild(head.children[i].cloneNode(true));
+        document.head.appendChild(head.children[i].cloneNode(true));
         break;
       case 'SCRIPT':
-        imports.push(head.children[i].cloneNode(true) as HTMLScriptElement);
+        if (head.children[i].getAttribute('src')) {
+          imports.push(head.children[i].cloneNode(true) as HTMLScriptElement);
+        } else {
+          scripts.push(head.children[i].cloneNode(true) as HTMLScriptElement);
+        }
+
         break;
       default:
         break;
@@ -188,8 +193,12 @@ export const parseHtml = (content: string) => {
   for (let i = 0; i < body.children.length; i++) {
     switch (body.children[i].nodeName) {
       case 'SCRIPT':
-        scripts.push(body.children[i].cloneNode(true) as HTMLScriptElement);
-        body.children[i].remove();
+        if (body.children[i].getAttribute('src')) {
+          document.body.appendChild(body.children[i].cloneNode(true) as HTMLScriptElement);
+        } else {
+          scripts.push(body.children[i].cloneNode(true) as HTMLScriptElement);
+        }
+
         break;
       case 'STYLE':
         divElement.appendChild(body.children[i].cloneNode(true));

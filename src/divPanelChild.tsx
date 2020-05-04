@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { PanelData } from '@grafana/data';
 import { css } from 'emotion';
-import { loadMeta, loadCSS, load, init, run } from 'utils/functions';
+import { load, init, run } from 'utils/functions';
 import { getDivPanelState } from './types';
 import tracker from 'utils/editmode';
-const Handlebars = require("handlebars");
+const Handlebars = require('handlebars');
 
 interface Props {
   id: string;
@@ -60,16 +60,16 @@ export class DivPanelChild extends Component<Props, State> {
   }
 
   loadDependencies(refreshState: boolean) {
-    const { id, imports, links, meta } = this.props;
-    let promises: Promise<any>[] = []
-    for (const i of meta) {
-      promises.push(loadMeta(i));
-    }
-    
-    for (const i of links) {
-      promises.push(loadCSS(i));
-    }
-    
+    const { id, imports } = this.props;
+    let promises: Array<Promise<any>> = [];
+    // for (const i of meta) {
+    //   promises.push(loadMeta(i));
+    // }
+
+    // for (const i of links) {
+    //   promises.push(loadCSS(i));
+    // }
+
     let container = document.getElementById(id)?.parentElement;
     if (container) {
       container = container.parentElement?.parentElement?.parentElement;
@@ -80,8 +80,7 @@ export class DivPanelChild extends Component<Props, State> {
       }
     }
 
-    return Promise.all(promises)
-    .then(() => {
+    return Promise.all(promises).then(() => {
       if (refreshState) {
         this.setState({
           depsLoaded: true,
@@ -93,10 +92,10 @@ export class DivPanelChild extends Component<Props, State> {
   panelUpdate() {
     const { depsLoaded } = this.state;
     const { id, command, scripts, editContent, onChange } = this.props;
-    const { editMode } = getDivPanelState();  
+    const { editMode } = getDivPanelState();
     const { state, series } = this.props.data;
 
-    console.log("child element", id);
+    console.log('child element', id);
     const elem = document.getElementById(id);
     tracker.update();
 
@@ -105,7 +104,7 @@ export class DivPanelChild extends Component<Props, State> {
         scripts.forEach(async i => await init(elem?.children, i));
         this.scriptsLoaded = true;
       }
-  
+
       const editState = tracker.get();
       const newEditContent = scripts.map((s: HTMLScriptElement) => {
         return run({
@@ -138,11 +137,11 @@ export class DivPanelChild extends Component<Props, State> {
 
     let template, newHtml;
     try {
-      template = Handlebars.compile(html)
+      template = Handlebars.compile(html);
       newHtml = template(series);
-    } catch(ex) {
-      console.log("could not compile", ex);
-      newHtml = html
+    } catch (ex) {
+      console.log('could not compile', ex);
+      newHtml = html;
     }
 
     let editContentElements: JSX.Element[] = [];
@@ -150,11 +149,11 @@ export class DivPanelChild extends Component<Props, State> {
       editContentElements = editContent.map((html: string, index: number) => {
         let template, newHtml;
         try {
-          template = Handlebars.compile(html)
+          template = Handlebars.compile(html);
           newHtml = template(series);
-        } catch(ex) {
-          console.log("could not compile", ex);
-          newHtml = html
+        } catch (ex) {
+          console.log('could not compile', ex);
+          newHtml = html;
         }
         return <div key={`${id}-edit-${index}`} id={`${id}-edit-${index}`} dangerouslySetInnerHTML={{ __html: newHtml || '' }}></div>;
       });

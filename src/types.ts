@@ -90,7 +90,7 @@ export const setDivPanelState = (state: DivPanelState) => {
 };
 
 export const getDivPanelState = (): DivPanelState => {
-  if (pathName != window.location.pathname) {
+  if (pathName !== window.location.pathname) {
     console.log('We have switched dashboards');
     pathName = window.location.pathname;
     divPanelState = { ...defaultDivPanelState };
