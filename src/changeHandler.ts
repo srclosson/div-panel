@@ -10,7 +10,9 @@ export const divPanelChangedHandler = (
   return prevOptions;
 };
 
-export const divPanelMigrationHandler = (panel: PanelModel<Partial<DivPanelOptions>> | any): Partial<DivPanelOptions> => {
+export const divPanelMigrationHandler = (
+  panel: PanelModel<Partial<DivPanelOptions>> | any
+): Partial<DivPanelOptions> => {
   console.log('DIV PANEL MIGRATION', panel);
   return panel.options;
 };

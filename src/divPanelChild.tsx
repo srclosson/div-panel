@@ -155,13 +155,24 @@ export class DivPanelChild extends Component<Props, State> {
           console.log('could not compile', ex);
           newHtml = html;
         }
-        return <div key={`${id}-edit-${index}`} id={`${id}-edit-${index}`} dangerouslySetInnerHTML={{ __html: newHtml || '' }}></div>;
+        return (
+          <div
+            key={`${id}-edit-${index}`}
+            id={`${id}-edit-${index}`}
+            dangerouslySetInnerHTML={{ __html: newHtml || '' }}
+          ></div>
+        );
       });
     }
     return (
       <>
         {editContentElements}
-        <div key={`${id}-achild`} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: newHtml }}></div>
+        <div
+          key={`${id}-achild`}
+          id={id}
+          className={divStyle.wrapper}
+          dangerouslySetInnerHTML={{ __html: newHtml }}
+        ></div>
       </>
     );
   }
