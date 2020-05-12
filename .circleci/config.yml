@@ -104,6 +104,9 @@ jobs:
     executor: default_exec
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "57:72:53:ae:cc:1f:18:14:aa:be:43:c9:85:e6:c8:90"
       - attach_workspace:
           at: .
       - restore_cache:
