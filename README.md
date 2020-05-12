@@ -8,6 +8,12 @@ Just write your html the same way you normally would:
 
 ```
 <html>
+  <head>
+    <!-- Add anything so it's available when your body script is run
+    <link href="to/some.css" >
+    <script src="to/some.js" /></script>
+    -->
+  </head>
   <body>
     <div>
         Hello Div Panel
@@ -51,6 +57,10 @@ Just write your html the same way you normally would:
   </body>
 </html>
 ```
+
+It differs from other "DIY" panels in that it tries to allow as close as possible, the ability to load and use javascript
+libraries exactly as you would if you were developing an html page without grafana. Just open the embedded code editor (monaco)
+and write your code.
 
 ## Callbacks
 There are four callbacks provided. 
