@@ -46,7 +46,7 @@ export class DivPanelParent extends Component<Props> {
 
     if (command === 'clear') {
       this.onClear();
-      return <div>You're code has been cleared</div>;
+      return <div>Clear and unmount complete</div>;
     }
     const { html, meta, links, scripts, imports } = parseHtml(content);
 

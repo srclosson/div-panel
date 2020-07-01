@@ -89,12 +89,15 @@ export class DivMonacoEditor extends Component<Props, State> {
   };
 
   onClearClick = () => {
+    const { onOptionsChange, options } = this.props;
+
     setDivPanelState({
       ...getDivPanelState(),
       command: 'clear',
       editContent: [],
       editMode: true,
     });
+    onOptionsChange(options);
   };
 
   onCloseClick = () => {
