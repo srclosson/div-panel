@@ -79,7 +79,14 @@ export const load = async (elem: HTMLScriptElement, container: HTMLElement): Pro
           },
         });
       } else {
-        resolve(elem);
+        // This is a embedded script we are running only one as it's in the head
+        postscribe(document.head, elem.outerHTML, {
+          done: () => {
+            let res = new Function(elem.innerText)();
+            console.log('ran', elem.innerText, res);
+            resolve(res);
+          },
+        });
       }
     });
   } catch (ex) {
@@ -108,7 +115,7 @@ export const run = (args: ScriptArgs): string => {
       }
 
       if (data && typeof onDivPanelDataUpdate === 'function') {
-        onDivPanelDataUpdate(data);
+        onDivPanelDataUpdate(data, elem);
       }
     `
     );
@@ -178,12 +185,8 @@ export const parseHtml = (content: string) => {
         document.head.appendChild(head.children[i].cloneNode(true));
         break;
       case 'SCRIPT':
-        if (head.children[i].getAttribute('src')) {
-          imports.push(head.children[i].cloneNode(true) as HTMLScriptElement);
-        } else {
-          scripts.push(head.children[i].cloneNode(true) as HTMLScriptElement);
-        }
-
+        imports.push(head.children[i].cloneNode(true) as HTMLScriptElement);
+        document.head.appendChild(head.children[i].cloneNode(true));
         break;
       default:
         break;

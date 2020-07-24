@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import Editor from '@monaco-editor/react';
 import { PanelEditorProps } from '@grafana/data';
-import { DivPanelOptions, getDivPanelState, DivPanelState, defaultContent, setDivPanelState } from './types';
+import Editor from '@monaco-editor/react';
+import { DivPanelOptions, getDivPanelState, defaultContent, setDivPanelState } from './types';
 import { Button, Drawer } from '@grafana/ui';
 
 interface Props extends PanelEditorProps<DivPanelOptions> {}
+
 interface State {
   editorVisible: boolean;
   content: string;
@@ -16,7 +17,6 @@ export class DivMonacoEditor extends Component<Props, State> {
   scripts: HTMLScriptElement[];
   constructor(props: Props) {
     super(props);
-
     const { content } = this.props.options;
     this.state = {
       editorVisible: false,
@@ -27,44 +27,15 @@ export class DivMonacoEditor extends Component<Props, State> {
   }
 
   componentDidMount() {
-    console.log('Editor::componentDidMount');
-    const divState = getDivPanelState();
-
     setDivPanelState({
-      ...divState,
+      ...getDivPanelState(),
       editMode: true,
     });
   }
 
   componentWillUnmount() {
-    //const { content } = this.state;
-    //const { onOptionsChange, options } = this.props;
-    const divState: DivPanelState = getDivPanelState();
-    //const elem = document.getElementById(`divPanel-edit-${divState.id}`);
-    //const scripts = parseScripts(content);
-
-    // if (elem) {
-    //   const editContent: Array<string | undefined> = scripts.map((s: HTMLScriptElement) => {
-    //     return runExitEditMode(s, elem?.children);
-    //   });
-
-    //   const cleanEditContent: string[] = [];
-    //   editContent.forEach((ec: string | undefined) => {
-    //     if (ec) {
-    //       cleanEditContent.push(ec);
-    //     }
-    //   });
-
-    //   onOptionsChange({
-    //     ...options,
-    //     editContent: cleanEditContent,
-    //   });
-
-    //   console.log("setting div panel state", cleanEditContent);
-    // }
-
     setDivPanelState({
-      ...divState,
+      ...getDivPanelState(),
       command: 'exitEditMode',
       editMode: false,
     });
@@ -90,7 +61,6 @@ export class DivMonacoEditor extends Component<Props, State> {
 
   onClearClick = () => {
     const { onOptionsChange, options } = this.props;
-
     setDivPanelState({
       ...getDivPanelState(),
       command: 'clear',
@@ -110,17 +80,14 @@ export class DivMonacoEditor extends Component<Props, State> {
   onRunClick = () => {
     const { onOptionsChange, options } = this.props;
     const content = this.getEditorValue();
-
     onOptionsChange({
       ...options,
       content,
     });
-
     setDivPanelState({
       ...getDivPanelState(),
       command: 'render',
     });
-
     this.setState({
       ...this.state,
       content,
@@ -152,7 +119,7 @@ export class DivMonacoEditor extends Component<Props, State> {
               <Button onClick={this.onCloseClick}>Close</Button>
             </div>
           </Drawer>
-        )) || <Button onClick={this.onOpenEditor}>Open Editor</Button>}
+        )) || <Button onClick={this.onOpenEditor}>Open</Button>}
       </>
     );
   };

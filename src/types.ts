@@ -52,6 +52,10 @@ export interface DivPanelOptions {
   id: string;
 }
 
+export interface DivPanelType {
+  editor: DivPanelOptions;
+}
+
 export const defaults: DivPanelOptions = {
   id: uuidv4(),
   content: defaultContent,

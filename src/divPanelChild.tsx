@@ -44,6 +44,10 @@ export class DivPanelChild extends Component<Props, State> {
     this.state = {
       depsLoaded: false,
     };
+
+    Handlebars.registerHelper('last', () => {
+      return this.props.data.series[0].fields[1].values.get(this.props.data.series[0].fields[1].values.length - 1);
+    });
   }
 
   componentDidMount() {
@@ -59,34 +63,32 @@ export class DivPanelChild extends Component<Props, State> {
     this.panelUpdate();
   }
 
-  loadDependencies(refreshState: boolean) {
+  loadDependencies(refreshState: boolean): Promise<any> {
     const { id, imports } = this.props;
+    const { depsLoaded } = this.state;
     let promises: Array<Promise<any>> = [];
-    // for (const i of meta) {
-    //   promises.push(loadMeta(i));
-    // }
 
-    // for (const i of links) {
-    //   promises.push(loadCSS(i));
-    // }
-
-    let container = document.getElementById(id)?.parentElement;
-    if (container) {
-      container = container.parentElement?.parentElement?.parentElement;
-    }
-    if (container) {
-      for (const i of imports) {
-        promises.push(load(i, container));
+    if (!depsLoaded) {
+      let container = document.getElementById(id)?.parentElement;
+      if (container) {
+        container = container.parentElement?.parentElement?.parentElement;
       }
+      if (container) {
+        for (const i of imports) {
+          promises.push(load(i, container));
+        }
+      }
+
+      return Promise.all(promises).then(() => {
+        if (refreshState) {
+          this.setState({
+            depsLoaded: true,
+          });
+        }
+      });
     }
 
-    return Promise.all(promises).then(() => {
-      if (refreshState) {
-        this.setState({
-          depsLoaded: true,
-        });
-      }
-    });
+    return Promise.resolve(null);
   }
 
   panelUpdate() {
@@ -95,11 +97,10 @@ export class DivPanelChild extends Component<Props, State> {
     const { editMode } = getDivPanelState();
     const { state, series } = this.props.data;
 
-    console.log('child element', id);
     const elem = document.getElementById(id);
     tracker.update();
 
-    if (state === 'Done' && elem) {
+    if ((state === 'Done' || state === 'Streaming') && elem) {
       if (depsLoaded && !this.scriptsLoaded) {
         scripts.forEach(async i => await init(elem?.children, i));
         this.scriptsLoaded = true;
@@ -134,7 +135,6 @@ export class DivPanelChild extends Component<Props, State> {
   render() {
     const { id, html, editContent, editMode } = this.props;
     const { series } = this.props.data;
-
     let template, newHtml;
     try {
       template = Handlebars.compile(html);
@@ -155,13 +155,24 @@ export class DivPanelChild extends Component<Props, State> {
           console.log('could not compile', ex);
           newHtml = html;
         }
-        return <div key={`${id}-edit-${index}`} id={`${id}-edit-${index}`} dangerouslySetInnerHTML={{ __html: newHtml || '' }}></div>;
+        return (
+          <div
+            key={`${id}-edit-${index}`}
+            id={`${id}-edit-${index}`}
+            dangerouslySetInnerHTML={{ __html: newHtml || '' }}
+          ></div>
+        );
       });
     }
     return (
       <>
         {editContentElements}
-        <div key={`${id}-achild`} id={id} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: newHtml }}></div>
+        <div
+          key={`${id}-achild`}
+          id={id}
+          className={divStyle.wrapper}
+          dangerouslySetInnerHTML={{ __html: newHtml }}
+        ></div>
       </>
     );
   }
