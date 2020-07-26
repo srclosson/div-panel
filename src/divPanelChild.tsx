@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { PanelData } from '@grafana/data';
 import { css } from 'emotion';
-import { load, init, run } from 'utils/functions';
+import { load, init, run, loadMeta } from 'utils/functions';
 import { getDivPanelState } from './types';
 import tracker from 'utils/editmode';
 const Handlebars = require('handlebars');
@@ -64,7 +64,7 @@ export class DivPanelChild extends Component<Props, State> {
   }
 
   loadDependencies(refreshState: boolean): Promise<any> {
-    const { id, imports } = this.props;
+    const { id, imports, meta } = this.props;
     const { depsLoaded } = this.state;
     let promises: Array<Promise<any>> = [];
 
@@ -76,6 +76,9 @@ export class DivPanelChild extends Component<Props, State> {
       if (container) {
         for (const i of imports) {
           promises.push(load(i, container));
+        }
+        for (const i of meta) {
+          promises.push(loadMeta(i));
         }
       }
 
