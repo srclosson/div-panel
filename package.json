@@ -23,7 +23,7 @@
     "handlebars": "4.7.6",
     "jquery": "3.5.0",
     "kind-of": "6.0.3",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "minimist": "0.2.1",
     "postscribe": "2.0.8",
     "prop-types": "15.5.8",
