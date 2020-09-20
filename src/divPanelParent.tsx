@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { DivPanelChild } from './divPanelChild';
-import { DivPanelType, getDivPanelState, setDivPanelState, defaults } from './types';
+import { getDivPanelState, setDivPanelState, defaults, DivPanelOptions } from './types';
 import { PanelProps } from '@grafana/data';
 import { parseHtml } from 'utils/functions';
 
-interface Props extends PanelProps<DivPanelType> {}
+interface Props extends PanelProps<DivPanelOptions> {}
 
 export class DivPanelParent extends Component<Props> {
   id: string;
   constructor(props: Props) {
     super(props);
 
-    const editor = props.options.editor || defaults;
+    const editor = props.options || defaults;
     const divState = getDivPanelState();
     if (divState.editMode) {
       this.id = `divPanel-edit-${editor.id}`;
@@ -36,16 +36,14 @@ export class DivPanelParent extends Component<Props> {
     const { onOptionsChange, options } = this.props;
 
     onOptionsChange({
-      editor: {
-        ...options.editor,
-        editContent,
-      },
+      ...options,
+      editContent,
     });
   };
 
   render() {
     const { data } = this.props;
-    const { content, editContent } = this.props.options.editor || defaults;
+    const { content, editContent } = this.props.options || defaults;
     const { command, editMode } = getDivPanelState();
 
     if (command === 'clear') {
