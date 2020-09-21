@@ -1,17 +1,18 @@
 import React from 'react';
-import { PanelPlugin, PanelOptionsEditorBuilder } from '@grafana/data';
+import { PanelPlugin } from '@grafana/data';
 import { DivPanelParent } from 'divPanelParent';
 import { DivMonacoEditor } from 'editor';
-import { DivPanelOptions, defaults } from './types';
+import { DivPanelType, defaults } from './types';
 import { divPanelMigrationHandler } from './changeHandler';
 
-export const plugin = new PanelPlugin<DivPanelOptions>(DivPanelParent)
-  .setPanelOptions((builder: PanelOptionsEditorBuilder<DivPanelOptions>) => {
+export const plugin = new PanelPlugin<DivPanelType>(DivPanelParent)
+  .setPanelOptions(builder => {
     builder.addCustomEditor({
       id: 'divPanelEdit',
       path: 'editor',
       name: 'Div Panel Code Editor',
       editor: props => {
+        console.log('props', props);
         return (
           <DivMonacoEditor
             options={props.value || defaults}

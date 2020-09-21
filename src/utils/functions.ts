@@ -199,7 +199,55 @@ export const parseHtml = (content: string) => {
         if (body.children[i].getAttribute('src')) {
           document.body.appendChild(body.children[i].cloneNode(true) as HTMLScriptElement);
         } else {
-          scripts.push(body.children[i].cloneNode(true) as HTMLScriptElement);
+          switch (body.children[i].getAttribute('run')?.toLowerCase()) {
+            case 'oninit':
+              {
+                let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
+                temp.innerText = `
+                function onDivPanelInit(elem) {
+                  ${temp.innerText}
+                }
+              `;
+                scripts.push(temp);
+              }
+              break;
+            case 'onentereditmode':
+              {
+                let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
+                temp.innerText = `
+                function onDivPanelEnterEditMode(elem) {
+                  ${temp.innerText}
+                }
+              `;
+                scripts.push(temp);
+              }
+              break;
+            case 'onexiteditmode':
+              {
+                let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
+                temp.innerText = `
+                function onDivPanelExitEditMode(elem) {
+                  ${temp.innerText}
+                }
+              `;
+                scripts.push(temp);
+              }
+              break;
+            case 'ondata':
+              {
+                let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
+                temp.innerText = `
+                function onDivPanelDataUpdate(data, elem) {
+                  ${temp.innerText}
+                }
+              `;
+                scripts.push(temp);
+              }
+              break;
+            default:
+              scripts.push(body.children[i].cloneNode(true) as HTMLScriptElement);
+              break;
+          }
         }
 
         break;
