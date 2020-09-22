@@ -14,19 +14,21 @@ interface ScriptArgs {
 
 let scriptsLoaded: Record<string, boolean> = {};
 let linksLoaded: Record<string, boolean> = {};
+let divGlobals: any = {};
 
 export const init = (elem: HTMLCollection, code: HTMLScriptElement): any => {
   try {
     const f = new Function(
+      'divGlobals',
       'elem',
       `
-      ${code.innerText}
+      ${code.textContent}
       if (typeof onDivPanelInit === 'function') {
         onDivPanelInit(elem);
       }
     `
     );
-    f(elem);
+    f(divGlobals, elem);
   } catch (ex) {
     throw ex;
   }
@@ -97,6 +99,7 @@ export const load = async (elem: HTMLScriptElement, container: HTMLElement): Pro
 export const run = (args: ScriptArgs): string => {
   try {
     const f = new Function(
+      'divGlobals',
       'data',
       'elem',
       'editMode',
@@ -104,11 +107,11 @@ export const run = (args: ScriptArgs): string => {
       'editContent',
       'command',
       `
+      ${args.code.textContent}
+
       if (typeof onDivPanelEnterEditMode === 'function' && editMode && !editState.prev && editState.curr ) {
         onDivPanelEnterEditMode(elem, editContent);
       }
-
-      ${args.code.innerText}
 
       if (typeof onDivPanelExitEditMode === 'function' && !editMode && editState.prev && !editState.curr ) {
         return onDivPanelExitEditMode(elem);
@@ -119,7 +122,7 @@ export const run = (args: ScriptArgs): string => {
       }
     `
     );
-    return f(args.data, args.elem, args.editMode, args.editState, args.editContent.join('\n'), args.command);
+    return f(divGlobals, args.data, args.elem, args.editMode, args.editState, args.editContent.join('\n'), args.command);
   } catch (ex) {
     throw ex;
   }
@@ -128,16 +131,17 @@ export const run = (args: ScriptArgs): string => {
 export const runEnterEditMode = (script: HTMLScriptElement, elem: HTMLCollection) => {
   try {
     const f = new Function(
+      'divGlobals',
       'elem',
       `
+      ${script.textContent}
+
       if (typeof onDivPanelEnterEditMode === 'function') {
         onDivPanelEnterEditMode(elem);
       }
-
-      ${script.innerText}
     `
     );
-    return f(elem);
+    return f(divGlobals, elem);
   } catch (ex) {
     throw ex;
   }
@@ -146,16 +150,17 @@ export const runEnterEditMode = (script: HTMLScriptElement, elem: HTMLCollection
 export const runExitEditMode = (script: HTMLScriptElement, elem: HTMLCollection): string => {
   try {
     const f = new Function(
+      'divGlobals',
       'elem',
       `
-      ${script.innerText}
+      ${script.textContent}
 
       if (typeof onDivPanelExitEditMode === 'function') {
         return onDivPanelExitEditMode(elem);
       }
     `
     );
-    return f(elem);
+    return f(divGlobals, elem);
   } catch (ex) {
     throw ex;
   }
@@ -203,9 +208,8 @@ export const parseHtml = (content: string) => {
             case 'oninit':
               {
                 let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
-                temp.innerText = `
-                function onDivPanelInit(elem) {
-                  ${temp.innerText}
+                temp.textContent = `function onDivPanelInit(elem) {
+                  ${temp.textContent}
                 }
               `;
                 scripts.push(temp);
@@ -214,9 +218,8 @@ export const parseHtml = (content: string) => {
             case 'onentereditmode':
               {
                 let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
-                temp.innerText = `
-                function onDivPanelEnterEditMode(elem) {
-                  ${temp.innerText}
+                temp.textContent = `function onDivPanelEnterEditMode(elem) {
+                  ${temp.textContent}
                 }
               `;
                 scripts.push(temp);
@@ -225,9 +228,8 @@ export const parseHtml = (content: string) => {
             case 'onexiteditmode':
               {
                 let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
-                temp.innerText = `
-                function onDivPanelExitEditMode(elem) {
-                  ${temp.innerText}
+                temp.textContent = `function onDivPanelExitEditMode(elem) {
+                  ${temp.textContent}
                 }
               `;
                 scripts.push(temp);
@@ -236,9 +238,8 @@ export const parseHtml = (content: string) => {
             case 'ondata':
               {
                 let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
-                temp.innerText = `
-                function onDivPanelDataUpdate(data, elem) {
-                  ${temp.innerText}
+                temp.textContent = `function onDivPanelDataUpdate(data, elem) {
+                  ${temp.textContent}
                 }
               `;
                 scripts.push(temp);

@@ -140,10 +140,11 @@ export class DivPanelChild extends Component<Props, State> {
     const { series } = this.props.data;
     let template, newHtml;
     try {
+      console.log("series", series);
       template = Handlebars.compile(html);
       newHtml = template(series);
     } catch (ex) {
-      console.log('could not compile', ex);
+      console.log('could not compile', html, ex);
       newHtml = html;
     }
 
@@ -155,7 +156,7 @@ export class DivPanelChild extends Component<Props, State> {
           template = Handlebars.compile(html);
           newHtml = template(series);
         } catch (ex) {
-          console.log('could not compile', ex);
+          console.log('could not compile', html, ex);
           newHtml = html;
         }
         return (
