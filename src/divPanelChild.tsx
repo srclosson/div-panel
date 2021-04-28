@@ -56,8 +56,8 @@ export class DivPanelChild extends Component<Props, State> {
 
   shouldComponentUpdate(prevProps: Props) {
     return (
-      (prevProps.options.content !== this.props.options.content) ||
-      (prevProps.html !== this.props.html) ||
+      prevProps.options.content !== this.props.options.content ||
+      prevProps.html !== this.props.html ||
       this.state.depsLoaded === false
     );
   }
@@ -110,7 +110,7 @@ export class DivPanelChild extends Component<Props, State> {
 
     if ((state === 'Done' || state === 'Streaming') && elem) {
       if (depsLoaded && !this.scriptsLoaded) {
-        scripts.forEach(async i => await init(elem?.children, i));
+        scripts.forEach(async (i) => await init(elem?.children, i));
         this.scriptsLoaded = true;
       }
 
@@ -131,7 +131,7 @@ export class DivPanelChild extends Component<Props, State> {
             error: undefined,
           });
           return returnedEditContent;
-        } catch(error) {
+        } catch (error) {
           onChange({
             ...options,
             error,

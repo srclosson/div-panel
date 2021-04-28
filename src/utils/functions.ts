@@ -35,7 +35,7 @@ export const init = (elem: HTMLCollection, code: HTMLScriptElement): any => {
 };
 
 export const loadMeta = (elem: HTMLMetaElement): Promise<any> => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     postscribe(document.head, elem.outerHTML, {
       done: () => resolve(elem),
     });
@@ -43,7 +43,7 @@ export const loadMeta = (elem: HTMLMetaElement): Promise<any> => {
 };
 
 export const loadCSS = (elem: HTMLLinkElement): Promise<any> => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const href = elem.getAttribute('href');
     if (href && !linksLoaded[href]) {
       postscribe(document.head, elem.outerHTML, {
@@ -67,12 +67,12 @@ export const load = async (elem: HTMLScriptElement, container: HTMLElement): Pro
           done: () => {
             fetch(url, { mode: 'no-cors' })
               .then((response: Response) => response.text())
-              .then(code => {
+              .then((code) => {
                 let res = new Function(code)();
                 scriptsLoaded[url] = true;
                 resolve(res);
               })
-              .catch(err => {
+              .catch((err) => {
                 reject(err);
               });
           },
@@ -122,7 +122,15 @@ export const run = (args: ScriptArgs): string => {
       }
     `
     );
-    return f(divGlobals, args.data, args.elem, args.editMode, args.editState, args.editContent.join('\n'), args.command);
+    return f(
+      divGlobals,
+      args.data,
+      args.elem,
+      args.editMode,
+      args.editState,
+      args.editContent.join('\n'),
+      args.command
+    );
   } catch (ex) {
     throw ex;
   }

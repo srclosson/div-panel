@@ -4,7 +4,7 @@ import Editor from '@monaco-editor/react';
 import { DivPanelOptions, getDivPanelState, defaultContent, setDivPanelState } from './types';
 import { Button } from '@grafana/ui';
 
-interface Props extends PanelEditorProps<DivPanelOptions> {}
+export interface Props extends PanelEditorProps<DivPanelOptions> {}
 
 interface State {
   editorVisible: boolean;
