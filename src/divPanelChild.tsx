@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import { PanelData } from '@grafana/data';
 import { css } from 'emotion';
 import { load, init, run, loadMeta } from 'utils/functions';
-import { getDivPanelState } from './types';
+import { getDivPanelState, DivPanelOptions } from './types';
 import tracker from 'utils/editmode';
 const Handlebars = require('handlebars');
 
 interface Props {
   id: string;
   html: string;
-  onChange?: (editContent: string[]) => void;
+  onChange: (options: DivPanelOptions) => void;
   editMode: boolean;
-  editContent: string[];
+  options: DivPanelOptions;
   meta: HTMLMetaElement[];
   scripts: HTMLScriptElement[];
   imports: HTMLScriptElement[];
@@ -54,8 +54,12 @@ export class DivPanelChild extends Component<Props, State> {
     this.loadDependencies(true);
   }
 
-  shouldComponentUpdate() {
-    return true;
+  shouldComponentUpdate(prevProps: Props) {
+    return (
+      (prevProps.options.content !== this.props.options.content) ||
+      (prevProps.html !== this.props.html) ||
+      this.state.depsLoaded === false
+    );
   }
 
   componentDidUpdate() {
@@ -96,7 +100,8 @@ export class DivPanelChild extends Component<Props, State> {
 
   panelUpdate() {
     const { depsLoaded } = this.state;
-    const { id, command, scripts, editContent, onChange } = this.props;
+    const { id, command, scripts, options, onChange } = this.props;
+    const { editContent } = options;
     const { editMode } = getDivPanelState();
     const { state, series } = this.props.data;
 
@@ -111,15 +116,28 @@ export class DivPanelChild extends Component<Props, State> {
 
       const editState = tracker.get();
       const newEditContent = scripts.map((s: HTMLScriptElement) => {
-        return run({
-          code: s,
-          elem: elem?.children,
-          editState,
-          editMode,
-          editContent,
-          command,
-          data: series,
-        });
+        try {
+          let returnedEditContent = run({
+            code: s,
+            elem: elem?.children,
+            editState,
+            editMode,
+            editContent,
+            command,
+            data: series,
+          });
+          onChange({
+            ...options,
+            error: undefined,
+          });
+          return returnedEditContent;
+        } catch(error) {
+          onChange({
+            ...options,
+            error,
+          });
+          return;
+        }
       });
 
       const cleanEditContent: string[] = [];
@@ -129,22 +147,24 @@ export class DivPanelChild extends Component<Props, State> {
         }
       });
 
-      if (onChange && editState.prev && !editState.curr) {
-        onChange(cleanEditContent);
+      if (editState.prev && !editState.curr) {
+        onChange({
+          ...options,
+          editContent: cleanEditContent,
+        });
       }
     }
   }
 
   render() {
-    const { id, html, editContent, editMode } = this.props;
+    const { id, html, options, editMode } = this.props;
+    const { editContent } = options;
     const { series } = this.props.data;
     let template, newHtml;
     try {
-      console.log("series", series);
       template = Handlebars.compile(html);
       newHtml = template(series);
     } catch (ex) {
-      console.log('could not compile', html, ex);
       newHtml = html;
     }
 

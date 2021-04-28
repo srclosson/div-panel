@@ -166,7 +166,7 @@ export const runExitEditMode = (script: HTMLScriptElement, elem: HTMLCollection)
   }
 };
 
-export const parseHtml = (content: string) => {
+export const parseHtml = (content: string, error?: string) => {
   const scripts: HTMLScriptElement[] = [];
   const imports: HTMLScriptElement[] = [];
   const links: HTMLLinkElement[] = [];
@@ -261,8 +261,13 @@ export const parseHtml = (content: string) => {
     }
   }
 
+  let html = divElement.innerHTML;
+  if (error) {
+    html = error;
+  }
+
   return {
-    html: divElement.innerHTML,
+    html,
     meta,
     scripts,
     imports,

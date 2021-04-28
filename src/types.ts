@@ -49,6 +49,7 @@ export interface DivPanelOptions {
   content: string;
   editContent: string[];
   editCss: string[];
+  error?: string;
   id: string;
 }
 
@@ -74,6 +75,7 @@ export interface DivPanelState {
   scriptsLoaded: boolean;
   importsLoaded: boolean;
   linksLoaded: boolean;
+  error?: string;
 }
 
 let pathName = window.location.pathname;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { PanelEditorProps } from '@grafana/data';
 import Editor from '@monaco-editor/react';
 import { DivPanelOptions, getDivPanelState, defaultContent, setDivPanelState } from './types';
-import { Button, Drawer } from '@grafana/ui';
+import { Button } from '@grafana/ui';
 
 interface Props extends PanelEditorProps<DivPanelOptions> {}
 
@@ -13,7 +13,6 @@ interface State {
 
 export class DivMonacoEditor extends Component<Props, State> {
   getJs: any | undefined;
-  getEditorValue: any | undefined;
   scripts: HTMLScriptElement[];
   constructor(props: Props) {
     super(props);
@@ -22,7 +21,6 @@ export class DivMonacoEditor extends Component<Props, State> {
       editorVisible: false,
       content: content || defaultContent,
     };
-    this.getEditorValue = undefined;
     this.scripts = [];
   }
 
@@ -50,13 +48,12 @@ export class DivMonacoEditor extends Component<Props, State> {
     });
   };
 
-  onHtmlEditorDidMount = (getEditorValue: any) => {
-    this.getEditorValue = getEditorValue;
-  };
-
-  onApplyClick = () => {
-    this.onRunClick();
-    this.onCloseClick();
+  onChange = (content?: string) => {
+    if (content) {
+      this.setState({
+        content,
+      });
+    }
   };
 
   onClearClick = () => {
@@ -70,16 +67,10 @@ export class DivMonacoEditor extends Component<Props, State> {
     onOptionsChange(options);
   };
 
-  onCloseClick = () => {
-    this.setState({
-      editorVisible: false,
-      content: this.getEditorValue(),
-    });
-  };
-
   onRunClick = () => {
     const { onOptionsChange, options } = this.props;
-    const content = this.getEditorValue();
+    const { content } = this.state;
+
     onOptionsChange({
       ...options,
       content,
@@ -95,32 +86,14 @@ export class DivMonacoEditor extends Component<Props, State> {
   };
 
   onRender = (): JSX.Element => {
-    const { editorVisible, content } = this.state;
+    const { content } = this.state;
 
     return (
-      <>
-        {(editorVisible && (
-          <Drawer
-            width="50%"
-            title="Div Panel Code Editor"
-            expandable
-            onClose={() => {
-              this.setState({
-                editorVisible: false,
-                content,
-              });
-            }}
-          >
-            <div style={{ width: '100%', height: '85vh' }}>
-              <Editor language="html" value={content} editorDidMount={this.onHtmlEditorDidMount} theme={'dark'} />
-              <Button onClick={this.onRunClick}>Run</Button>
-              <Button onClick={this.onClearClick}>Clear</Button>
-              <Button onClick={this.onApplyClick}>Apply</Button>
-              <Button onClick={this.onCloseClick}>Close</Button>
-            </div>
-          </Drawer>
-        )) || <Button onClick={this.onOpenEditor}>Open</Button>}
-      </>
+      <div style={{ width: '100%', height: '50vh' }}>
+        <Editor language="html" value={content} onChange={this.onChange} theme={'vs-dark'} />
+        <Button onClick={this.onRunClick}>Run</Button>
+        <Button onClick={this.onClearClick}>Clear</Button>
+      </div>
     );
   };
 
