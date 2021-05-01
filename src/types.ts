@@ -1,7 +1,9 @@
 import { PanelProps } from '@grafana/data';
-import { v4 as uuidv4 } from 'uuid';
+import { css } from 'emotion';
+import { PanelData } from '@grafana/data';
 
-export const defaultContent = `<html>
+
+export const defaultEditContent = `<html>
 <body>
   <div>
       Hello Div Panel
@@ -45,12 +47,45 @@ export const defaultContent = `<html>
 </body>
 </html>`;
 
+export const defaultContent = `<html>
+<body>
+  <div>
+      Hello Div Panel
+  </div>
+
+  <script>
+      /**
+       * @param elem The div element containing your div panel
+       */
+      function onDivPanelInit(elem) {
+        console.log("I am in init", elem);
+      }
+
+      /**
+       * @param data The data retrieved from your panel data config
+       */
+      function onDivPanelDataUpdate(data) {
+        console.log("I have data", data);
+      }
+      
+      console.log("Hello from my script!");
+  </script>
+</body>
+</html>`;
+export interface DivPanelParsedHtml {
+  html: string,
+  meta: HTMLMetaElement[],
+  scripts: HTMLScriptElement[],
+  imports: HTMLScriptElement[],
+  links: HTMLLinkElement[],
+}
+
 export interface DivPanelOptions {
   content: string;
   editContent: string[];
   editCss: string[];
+  editMode: boolean;
   error?: string;
-  id: string;
 }
 
 export interface DivPanelType {
@@ -58,37 +93,30 @@ export interface DivPanelType {
 }
 
 export const defaults: DivPanelOptions = {
-  id: uuidv4(),
   content: defaultContent,
   editContent: [],
   editCss: [],
+  editMode: true,
 };
+
+export interface DivPanelChildProps {
+  onChange: (options: DivPanelOptions) => void;
+  options: DivPanelOptions;
+  parsed: DivPanelParsedHtml;
+  data: PanelData;
+}
 
 export interface DivPanelProps extends PanelProps<DivPanelOptions> {}
 
 export interface DivPanelState {
-  editId: string;
   command: string;
-  editMode: boolean;
-  editContent: string[];
-  metaLoaded: boolean;
-  scriptsLoaded: boolean;
-  importsLoaded: boolean;
-  linksLoaded: boolean;
   error?: string;
 }
 
-let pathName = window.location.pathname;
 const defaultDivPanelState = {
-  editId: '',
   command: '',
-  editMode: false,
-  editContent: [],
-  metaLoaded: false,
-  scriptsLoaded: false,
-  importsLoaded: false,
-  linksLoaded: false,
 };
+
 let divPanelState: DivPanelState = defaultDivPanelState;
 
 export const setDivPanelState = (state: DivPanelState) => {
@@ -96,11 +124,6 @@ export const setDivPanelState = (state: DivPanelState) => {
 };
 
 export const getDivPanelState = (): DivPanelState => {
-  if (pathName !== window.location.pathname) {
-    console.log('We have switched dashboards');
-    pathName = window.location.pathname;
-    divPanelState = { ...defaultDivPanelState };
-  }
   return divPanelState;
 };
 
@@ -109,4 +132,13 @@ export const clearDivPanelState = () => {
     ...divPanelState,
     command: '',
   };
+};
+
+export const divStyle = {
+  wrapper: css`
+    display: inline-grid;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  `,
 };

@@ -11,11 +11,10 @@
   "author": "srclosson@gmail.com",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@grafana/data": "7.5.5",
-    "@grafana/runtime": "7.5.5",
-    "@grafana/toolkit": "7.5.5",
-    "@grafana/ui": "7.5.5",
-    "@monaco-editor/react": "4.1.3",
+    "@grafana/data": "7.5.4",
+    "@grafana/runtime": "7.5.4",
+    "@grafana/toolkit": "7.5.4",
+    "@grafana/ui": "7.5.4",
     "@types/lodash": "4.14.168",
     "@types/prop-types": "15.7.3",
     "@types/react": "17.0.4",
@@ -28,14 +27,9 @@
     "postscribe": "2.0.8",
     "prop-types": "15.5.8",
     "react": "16.12.0",
-    "serialize-javascript": "5.0.1"
+    "console-feed": "3.2.2"
   },
   "dependencies": {
-    "@types/braintree__sanitize-url": "4.1.0",
-    "@types/jquery": "3.5.5",
-    "@types/react-virtualized-auto-sizer": "1.0.0",
-    "@types/uuid": "8.3.0",
-    "react-virtualized-auto-sizer": "1.0.5",
-    "uuid": "8.3.2"
+    "@types/jquery": "3.5.5"
   }
 }

@@ -1,5 +1,4 @@
 /* eslint react/display-name: 0 */
-import React from 'react';
 import { PanelPlugin } from '@grafana/data';
 import { DivPanelParent } from 'divPanelParent';
 import { DivMonacoEditor } from 'editor';
@@ -11,14 +10,8 @@ export const plugin = new PanelPlugin<DivPanelType>(DivPanelParent).setPanelOpti
     id: 'divPanelEdit',
     path: 'editor',
     name: 'Div Panel Code Editor',
-    editor: (props) => (
-      <DivMonacoEditor
-        options={props.value || defaults}
-        onOptionsChange={(editor) => {
-          props.onChange(editor);
-        }}
-      />
-    ),
+    editor: DivMonacoEditor,
+    defaultValue: defaults,
   });
 });
 //.setMigrationHandler(divPanelMigrationHandler);
