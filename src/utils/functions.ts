@@ -101,11 +101,7 @@ export const run = (args: ScriptArgs): string => {
       }
     `
     );
-    return f(
-      divGlobals,
-      args.data,
-      args.elem,
-    );
+    return f(divGlobals, args.data, args.elem);
   } catch (ex) {
     throw ex;
   }
@@ -150,8 +146,8 @@ export const runExitEditMode = (script: HTMLScriptElement, elem: HTMLCollection)
 };
 
 export const hasEditModeFunctions = (text: string): boolean => {
-  return text.includes("onDivPanelEnterEditMode") && text.includes("onDivPanelExitEditMode");
-}
+  return text.includes('onDivPanelEnterEditMode') && text.includes('onDivPanelExitEditMode');
+};
 
 export const parseHtml = (content: string, error?: string): DivPanelParsedHtml => {
   const scripts: HTMLScriptElement[] = [];

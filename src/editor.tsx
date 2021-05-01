@@ -1,4 +1,4 @@
-import React,{ useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { StandardEditorProps } from '@grafana/data';
 import { DivPanelOptions, defaultContent, getDivPanelState, setDivPanelState, defaults } from './types';
 import { CodeEditor, Button } from '@grafana/ui';
@@ -13,16 +13,16 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
   // });
 
   useEffect(() => {
-    console.log("the editor is opening");
+    console.log('the editor is opening');
     onChange(value || defaults);
     return () => {
-      console.log("the editor is closing");
+      console.log('the editor is closing');
       onChange({
         ...value,
         editMode: false,
       });
     };
-  }, []);
+  }, [value, onChange]);
 
   // run once!
   // useEffect((): any => {
@@ -40,8 +40,6 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
       content,
     });
   };
-
-  
 
   const onSave = (content: string) => {
     commitContent(content);

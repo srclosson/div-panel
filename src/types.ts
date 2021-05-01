@@ -1,7 +1,5 @@
-import { PanelProps } from '@grafana/data';
+import { PanelProps, PanelData } from '@grafana/data';
 import { css } from 'emotion';
-import { PanelData } from '@grafana/data';
-
 
 export const defaultEditContent = `<html>
 <body>
@@ -73,11 +71,11 @@ export const defaultContent = `<html>
 </body>
 </html>`;
 export interface DivPanelParsedHtml {
-  html: string,
-  meta: HTMLMetaElement[],
-  scripts: HTMLScriptElement[],
-  imports: HTMLScriptElement[],
-  links: HTMLLinkElement[],
+  html: string;
+  meta: HTMLMetaElement[];
+  scripts: HTMLScriptElement[];
+  imports: HTMLScriptElement[];
+  links: HTMLLinkElement[];
 }
 
 export interface DivPanelOptions {

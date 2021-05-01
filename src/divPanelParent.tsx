@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { DivPanelChild } from './divPanelChild';
 import { DivPanelEditChild } from './divPanelEditChild';
-import { DivPanelType, getDivPanelState, defaults, DivPanelOptions } from './types';
+import { DivPanelType, getDivPanelState, DivPanelOptions } from './types';
 import { hasEditModeFunctions } from './utils/functions';
 import { PanelProps } from '@grafana/data';
 import { parseHtml } from 'utils/functions';
@@ -34,23 +34,9 @@ export class DivPanelParent extends Component<Props> {
 
     const parsed = parseHtml(content, error);
     if (editMode && hasEditModeFunctions(content)) {
-      return (
-        <DivPanelEditChild
-          onChange={this.onChangeChild}
-          options={options}
-          parsed={parsed}
-          data={data}
-        />
-      )
+      return <DivPanelEditChild onChange={this.onChangeChild} options={options} parsed={parsed} data={data} />;
     }
 
-    return (
-      <DivPanelChild
-        onChange={this.onChangeChild}
-        options={options}
-        parsed={parsed}
-        data={data}
-      />
-    );
+    return <DivPanelChild onChange={this.onChangeChild} options={options} parsed={parsed} data={data} />;
   }
 }

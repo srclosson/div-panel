@@ -3,7 +3,6 @@ import * as functions from 'utils/functions';
 import { DivPanelChildProps, divStyle } from './types';
 const Handlebars = require('handlebars');
 
-
 interface State {
   ref: HTMLDivElement | null;
 }
