@@ -30,16 +30,20 @@ export class DivPanelChild extends Component<DivPanelChildProps, State> {
   };
 
   componentDidUpdate = async () => {
+    const { ref } = this.state;
+    this.panelUpdate(ref!);
+  };
+
+  panelUpdate = async (elem: HTMLDivElement) => {
     const { data } = this.props;
     const { scripts } = this.props.parsed;
-    const { ref } = this.state;
     const { series } = data;
 
     scripts.forEach((s: HTMLScriptElement) => {
       try {
         let returnedEditContent = functions.run({
           code: s,
-          elem: ref?.children!,
+          elem,
           data: series,
         });
         return returnedEditContent;
@@ -58,6 +62,7 @@ export class DivPanelChild extends Component<DivPanelChildProps, State> {
     const { imports, meta, scripts } = this.props.parsed;
     await functions.loadDependencies(elem, imports, meta);
     await Promise.all(scripts.map((i) => functions.init(elem.children?.item(0)!, i)));
+    await this.panelUpdate(elem);
   };
 
   setRef = (element: HTMLDivElement | null) => {

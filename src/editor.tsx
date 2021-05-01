@@ -1,28 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { StandardEditorProps } from '@grafana/data';
 import { DivPanelOptions, defaultContent, getDivPanelState, setDivPanelState, defaults } from './types';
 import { CodeEditor, Button } from '@grafana/ui';
 //import { Console, Hook, Unhook } from 'console-feed';
 
 export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = ({ value, onChange }) => {
-  const content = value?.content || defaultContent;
+  const options = value || defaults;
+  const content = options.content || defaultContent;
   // const [logs, setLogs] = useState<any[]>([]);
   // onChange({
   //   ...value,
   //   editMode: true,
   // });
-
-  useEffect(() => {
-    console.log('the editor is opening');
-    onChange(value || defaults);
-    return () => {
-      console.log('the editor is closing');
-      onChange({
-        ...value,
-        editMode: false,
-      });
-    };
-  }, [value, onChange]);
 
   // run once!
   // useEffect((): any => {
@@ -61,6 +50,23 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
     });
     commitContent(content);
   };
+
+  const onOptionsChange = useCallback(
+    (key: string, value: boolean) => {
+      onChange({
+        ...options,
+        [key]: value,
+      });
+    },
+    [options, onChange]
+  );
+
+  useEffect(() => {
+    onOptionsChange('editMode', true);
+    return () => {
+      onOptionsChange('editMode', false);
+    };
+  }, [onOptionsChange]);
 
   return (
     <>

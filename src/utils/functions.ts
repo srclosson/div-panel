@@ -4,7 +4,7 @@ import { DivPanelParsedHtml } from 'types';
 
 interface ScriptArgs {
   data?: DataFrame[];
-  elem: HTMLCollection;
+  elem: HTMLDivElement;
   code: HTMLScriptElement;
 }
 
