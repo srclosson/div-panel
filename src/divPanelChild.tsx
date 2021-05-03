@@ -1,24 +1,20 @@
 import React, { Component } from 'react';
 import * as functions from 'utils/functions';
 import { DivPanelChildProps, divStyle } from './types';
-const Handlebars = require('handlebars');
+import { register, compile } from 'utils/handlebars';
 
 interface State {
   ref: HTMLDivElement | null;
 }
 
 export class DivPanelChild extends Component<DivPanelChildProps, State> {
-  editModeHtml: Array<string | undefined>;
   constructor(props: DivPanelChildProps) {
     super(props);
-    this.editModeHtml = [];
     this.state = {
       ref: null,
     };
 
-    Handlebars.registerHelper('last', () => {
-      return this.props.data.series[0].fields[1].values.get(this.props.data.series[0].fields[1].values.length - 1);
-    });
+    register(this.props.data);
   }
 
   shouldComponentUpdate = (prevProps: DivPanelChildProps, prevState: State): boolean => {
@@ -41,26 +37,26 @@ export class DivPanelChild extends Component<DivPanelChildProps, State> {
 
     scripts.forEach((s: HTMLScriptElement) => {
       try {
-        let returnedEditContent = functions.run({
+        functions.run({
           code: s,
           elem,
           data: series,
         });
-        return returnedEditContent;
       } catch (err) {
         //const error = typeof err === 'object' ? err.stack : err;
         // onChange({
         //   ...options,
         //   error,
         // });
-        return;
       }
     });
   };
 
   loadDependencies = async (elem: HTMLDivElement) => {
-    const { imports, meta, scripts } = this.props.parsed;
+    const { imports, meta, modules, scripts } = this.props.parsed;
+    const { data } = this.props;
     await functions.loadDependencies(elem, imports, meta);
+    await Promise.all(modules.map((i) => functions.loadModule(i, data, elem)));
     await Promise.all(scripts.map((i) => functions.init(elem.children?.item(0)!, i)));
     await this.panelUpdate(elem);
   };
@@ -77,17 +73,14 @@ export class DivPanelChild extends Component<DivPanelChildProps, State> {
   render() {
     const { html } = this.props.parsed;
     const { series } = this.props.data;
-    let template, newHtml;
-    try {
-      template = Handlebars.compile(html);
-      newHtml = template(series);
-    } catch (ex) {
-      newHtml = html;
-    }
 
     return (
       <>
-        <div ref={this.setRef} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: newHtml }}></div>
+        <div
+          ref={this.setRef}
+          className={divStyle.wrapper}
+          dangerouslySetInnerHTML={{ __html: compile(html, series) }}
+        ></div>
       </>
     );
   }

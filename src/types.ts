@@ -74,6 +74,7 @@ export interface DivPanelParsedHtml {
   html: string;
   meta: HTMLMetaElement[];
   scripts: HTMLScriptElement[];
+  modules: HTMLScriptElement[];
   imports: HTMLScriptElement[];
   links: HTMLLinkElement[];
 }
@@ -82,7 +83,6 @@ export interface DivPanelOptions {
   content: string;
   editContent: string[];
   editCss: string[];
-  editMode: boolean;
   error?: string;
 }
 
@@ -94,7 +94,6 @@ export const defaults: DivPanelOptions = {
   content: defaultContent,
   editContent: [],
   editCss: [],
-  editMode: true,
 };
 
 export interface DivPanelChildProps {
@@ -108,11 +107,13 @@ export interface DivPanelProps extends PanelProps<DivPanelOptions> {}
 
 export interface DivPanelState {
   command: string;
+  editMode: boolean;
   error?: string;
 }
 
 const defaultDivPanelState = {
   command: '',
+  editMode: false,
 };
 
 let divPanelState: DivPanelState = defaultDivPanelState;

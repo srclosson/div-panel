@@ -6,7 +6,7 @@ import { CodeEditor, Button } from '@grafana/ui';
 
 export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = ({ value, onChange }) => {
   const options = value || defaults;
-  const content = options.content || defaultContent;
+  const content = options?.content || defaultContent;
   // const [logs, setLogs] = useState<any[]>([]);
   // onChange({
   //   ...value,
@@ -51,22 +51,19 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
     commitContent(content);
   };
 
-  const onOptionsChange = useCallback(
-    (key: string, value: boolean) => {
-      onChange({
-        ...options,
-        [key]: value,
-      });
-    },
-    [options, onChange]
-  );
+  const onEditModeChange = useCallback((editMode: boolean) => {
+    setDivPanelState({
+      ...getDivPanelState(),
+      editMode,
+    });
+  }, []);
 
   useEffect(() => {
-    onOptionsChange('editMode', true);
+    onEditModeChange(true);
     return () => {
-      onOptionsChange('editMode', false);
+      onEditModeChange(false);
     };
-  }, [onOptionsChange]);
+  });
 
   return (
     <>

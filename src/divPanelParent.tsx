@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { DivPanelChild } from './divPanelChild';
 import { DivPanelEditChild } from './divPanelEditChild';
-import { DivPanelType, getDivPanelState, DivPanelOptions } from './types';
+import { DivPanelType, getDivPanelState, DivPanelOptions, defaults } from './types';
 import { hasEditModeFunctions } from './utils/functions';
 import { PanelProps } from '@grafana/data';
 import { parseHtml } from 'utils/functions';
@@ -22,11 +22,20 @@ export class DivPanelParent extends Component<Props> {
     });
   };
 
+  onChangeEditContent = (newEditContent: string[]) => {
+    const { options } = this.props;
+
+    this.onChangeChild({
+      ...options.editor,
+      editContent: newEditContent,
+    });
+  };
+
   render() {
     const { data } = this.props;
-    const options = this.props.options.editor;
-    const { editMode, content, error } = options;
-    const { command } = getDivPanelState();
+    const { editor } = this.props.options;
+    const { content, error } = editor || defaults;
+    const { command, editMode } = getDivPanelState();
 
     if (command === 'clear') {
       return <div>Clear and unmount complete</div>;
@@ -34,9 +43,18 @@ export class DivPanelParent extends Component<Props> {
 
     const parsed = parseHtml(content, error);
     if (editMode && hasEditModeFunctions(content)) {
-      return <DivPanelEditChild onChange={this.onChangeChild} options={options} parsed={parsed} data={data} />;
+      return (
+        <DivPanelEditChild
+          onChange={this.onChangeChild}
+          editMode={editMode}
+          changeEditContent={this.onChangeEditContent}
+          options={editor}
+          parsed={parsed}
+          data={data}
+        />
+      );
     }
 
-    return <DivPanelChild onChange={this.onChangeChild} options={options} parsed={parsed} data={data} />;
+    return <DivPanelChild onChange={this.onChangeChild} options={editor} parsed={parsed} data={data} />;
   }
 }

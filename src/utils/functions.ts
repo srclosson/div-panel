@@ -1,6 +1,7 @@
 import postscribe from 'postscribe';
-import { DataFrame } from '@grafana/data';
+import { DataFrame, PanelData } from '@grafana/data';
 import { DivPanelParsedHtml } from 'types';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ScriptArgs {
   data?: DataFrame[];
@@ -55,8 +56,8 @@ export const loadCSS = (elem: HTMLLinkElement): Promise<any> => {
 };
 
 export const load = async (elem: HTMLScriptElement, container?: HTMLElement): Promise<any> => {
-  try {
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
+    try {
       const url = elem.getAttribute('src');
       if (url && scriptsLoaded && !scriptsLoaded[url]) {
         postscribe(container || document.head, elem.outerHTML, {
@@ -81,10 +82,40 @@ export const load = async (elem: HTMLScriptElement, container?: HTMLElement): Pr
       } else {
         resolve('scripts already loaded');
       }
-    });
-  } catch (ex) {
-    console.error(ex);
-  }
+    } catch (ex) {
+      reject(ex);
+    }
+  });
+};
+
+export const loadModule = async (
+  elem: HTMLScriptElement,
+  panelData: PanelData,
+  container?: HTMLElement
+): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    try {
+      if (container) {
+        const uuid = uuidv4();
+        container.id = uuid;
+        elem.innerHTML = `
+          var divPanelElementUUID = "${uuid}";
+          var divPanelContainer = document.getElementById("${uuid}");
+          ${elem.innerHTML};
+        `;
+        postscribe(container || document.head, elem.outerHTML, {
+          done: (result: any) => {
+            resolve(result);
+          },
+          error: (err: any) => {
+            reject(err);
+          },
+        });
+      }
+    } catch (ex) {
+      reject(ex);
+    }
+  });
 };
 
 export const run = (args: ScriptArgs): string => {
@@ -107,7 +138,7 @@ export const run = (args: ScriptArgs): string => {
   }
 };
 
-export const runEnterEditMode = (script: HTMLScriptElement, elem: HTMLCollection) => {
+export const runEnterEditMode = (elem: Element, script: HTMLScriptElement) => {
   try {
     const f = new Function(
       'divGlobals',
@@ -126,7 +157,7 @@ export const runEnterEditMode = (script: HTMLScriptElement, elem: HTMLCollection
   }
 };
 
-export const runExitEditMode = (script: HTMLScriptElement, elem: HTMLCollection): string => {
+export const runExitEditMode = (elem: Element, script: HTMLScriptElement): string => {
   try {
     const f = new Function(
       'divGlobals',
@@ -154,6 +185,7 @@ export const parseHtml = (content: string, error?: string): DivPanelParsedHtml =
   const imports: HTMLScriptElement[] = [];
   const links: HTMLLinkElement[] = [];
   const meta: HTMLMetaElement[] = [];
+  const modules: HTMLScriptElement[] = [];
   const divElement: HTMLDivElement = document.createElement('div');
 
   const parser = new DOMParser();
@@ -186,6 +218,9 @@ export const parseHtml = (content: string, error?: string): DivPanelParsedHtml =
       case 'SCRIPT':
         if (body.children[i].getAttribute('src')) {
           document.body.appendChild(body.children[i].cloneNode(true) as HTMLScriptElement);
+        } else if (body.children[i].getAttribute('type') === 'module') {
+          let temp: HTMLScriptElement = body.children[i].cloneNode(true) as HTMLScriptElement;
+          modules.push(temp);
         } else {
           switch (body.children[i].getAttribute('run')?.toLowerCase()) {
             case 'oninit':
@@ -253,6 +288,7 @@ export const parseHtml = (content: string, error?: string): DivPanelParsedHtml =
     html,
     meta,
     scripts,
+    modules,
     imports,
     links,
   };

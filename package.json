@@ -30,6 +30,8 @@
     "console-feed": "3.2.2"
   },
   "dependencies": {
-    "@types/jquery": "3.5.5"
+    "@types/jquery": "3.5.5",
+    "uuid": "8.3.2",
+    "@types/uuid": "8.3.0"
   }
 }
