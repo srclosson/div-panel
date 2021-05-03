@@ -18,9 +18,6 @@ workflows:
   plugin_workflow:
     jobs:
       - build
-      - report:
-          requires:
-            - build
       - approve_release:
           type: approval
           requires:
