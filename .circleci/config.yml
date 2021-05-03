@@ -65,7 +65,7 @@ jobs:
           key: cypress-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
       - run:
           name: Build and test panel 
-          command: yarn dev && yarn test
+          command: ./node_modules/.bin/grafana-toolkit plugin:ci-build
       - run:
           name: Move results to ci folder
           command: ./node_modules/.bin/grafana-toolkit plugin:ci-build --finish
