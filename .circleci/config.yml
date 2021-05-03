@@ -83,23 +83,6 @@ jobs:
       - store_artifacts:
           path: ci
 
-  report:
-    executor: default_exec
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - restore_cache:
-          name: restore node_modules
-          keys:
-            - build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
-      - run:
-          name: Toolkit report
-          command: |
-            ./node_modules/.bin/grafana-toolkit plugin:ci-report
-      - store_artifacts:
-          path: ci
-
   publish_github_release:
     executor: default_exec
     steps:
