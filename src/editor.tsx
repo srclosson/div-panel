@@ -1,103 +1,76 @@
-import React, { Component } from 'react';
-import { PanelEditorProps } from '@grafana/data';
-import Editor from '@monaco-editor/react';
-import { DivPanelOptions, getDivPanelState, defaultContent, setDivPanelState } from './types';
-import { Button } from '@grafana/ui';
+import React, { useEffect, useCallback } from 'react';
+import { StandardEditorProps } from '@grafana/data';
+import { DivPanelOptions, defaultContent, getDivPanelState, setDivPanelState, defaults } from './types';
+import { CodeEditor, Button } from '@grafana/ui';
+//import { Console, Hook, Unhook } from 'console-feed';
 
-export interface Props extends PanelEditorProps<DivPanelOptions> {}
+export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = ({ value, onChange }) => {
+  const options = value || defaults;
+  const content = options?.content || defaultContent;
+  // const [logs, setLogs] = useState<any[]>([]);
+  // onChange({
+  //   ...value,
+  //   editMode: true,
+  // });
 
-interface State {
-  editorVisible: boolean;
-  content: string;
-}
+  // run once!
+  // useEffect((): any => {
+  //   const hookedConsole = Hook(
+  //     window.console,
+  //     (log: any) => setLogs((currLogs: Console[]): any => [...currLogs, log]),
+  //     false
+  //   );
+  //   return () => Unhook(hookedConsole);
+  // }, []);
 
-export class DivMonacoEditor extends Component<Props, State> {
-  getJs: any | undefined;
-  scripts: HTMLScriptElement[];
-  constructor(props: Props) {
-    super(props);
-    const { content } = this.props.options;
-    this.state = {
-      editorVisible: false,
-      content: content || defaultContent,
-    };
-    this.scripts = [];
-  }
-
-  componentDidMount() {
-    setDivPanelState({
-      ...getDivPanelState(),
-      editMode: true,
-    });
-  }
-
-  componentWillUnmount() {
-    setDivPanelState({
-      ...getDivPanelState(),
-      command: 'exitEditMode',
-      editMode: false,
-    });
-  }
-
-  onOpenEditor = () => {
-    const { content } = this.state;
-
-    this.setState({
-      editorVisible: true,
+  const commitContent = (content: string) => {
+    onChange({
+      ...value,
       content,
     });
   };
 
-  onChange = (content?: string) => {
-    if (content) {
-      this.setState({
-        content,
-      });
-    }
+  const onSave = (content: string) => {
+    commitContent(content);
   };
 
-  onClearClick = () => {
-    const { onOptionsChange, options } = this.props;
+  const onClearClick = () => {
     setDivPanelState({
       ...getDivPanelState(),
       command: 'clear',
-      editContent: [],
-      editMode: true,
     });
-    onOptionsChange(options);
+
+    commitContent(content);
   };
 
-  onRunClick = () => {
-    const { onOptionsChange, options } = this.props;
-    const { content } = this.state;
-
-    onOptionsChange({
-      ...options,
-      content,
-    });
+  const onRunClick = () => {
     setDivPanelState({
       ...getDivPanelState(),
       command: 'render',
     });
-    this.setState({
-      ...this.state,
-      content,
+    commitContent(content);
+  };
+
+  const onEditModeChange = useCallback((editMode: boolean) => {
+    setDivPanelState({
+      ...getDivPanelState(),
+      editMode,
     });
-  };
+  }, []);
 
-  onRender = (): JSX.Element => {
-    const { content } = this.state;
+  useEffect(() => {
+    onEditModeChange(true);
+    return () => {
+      onEditModeChange(false);
+    };
+  });
 
-    return (
-      <div style={{ width: '100%', height: '50vh' }}>
-        <Editor language="html" value={content} onChange={this.onChange} theme={'vs-dark'} />
-        <Button onClick={this.onRunClick}>Run</Button>
-        <Button onClick={this.onClearClick}>Clear</Button>
-      </div>
-    );
-  };
-
-  render() {
-    return this.onRender();
-  }
-}
+  return (
+    <>
+      <CodeEditor language="html" width="100%" height="50vh" value={content} onSave={onSave} />
+      <Button onClick={onRunClick}>Run</Button>
+      <Button onClick={onClearClick}>Clear</Button>
+      {/* <Console logs={logs} variant="dark" /> */}
+    </>
+  );
+};

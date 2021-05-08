@@ -18,23 +18,20 @@ workflows:
   plugin_workflow:
     jobs:
       - build
-      - report:
-          requires:
-            - build
       - approve_release:
           type: approval
           requires:
-            - report
+            - build
           filters: *filter-only-release
       - publish_github_release:
           requires:
-            - approve_release
+            - build
           filters: *filter-only-release
 
 executors:
   default_exec: # declares a reusable executor
     docker:
-      - image: srclosson/grafana-plugin-ci-alpine:latest
+      - image: srclosson/grafana-plugin-ci:latest
   e2e_exec:
     docker:
       - image: srclosson/grafana-plugin-ci-e2e:latest
@@ -52,7 +49,7 @@ jobs:
           name: Install dependencies
           command: |
             mkdir ci
-            [ -f ~/project/node_modules/.bin/grafana-toolkit ] || yarn install --frozen-lockfile
+            yarn install --frozen-lockfile
       - save_cache:
           name: save node_modules
           paths:
@@ -80,23 +77,6 @@ jobs:
           - ci/packages
           - ci/dist
           - ci/grafana-test-env
-      - store_artifacts:
-          path: ci
-
-  report:
-    executor: default_exec
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - restore_cache:
-          name: restore node_modules
-          keys:
-            - build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
-      - run:
-          name: Toolkit report
-          command: |
-            ./node_modules/.bin/grafana-toolkit plugin:ci-report
       - store_artifacts:
           path: ci
 

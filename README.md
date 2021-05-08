@@ -58,9 +58,59 @@ Just write your html the same way you normally would:
 </html>
 ```
 
+Alternatively, you can use `script` tags and specify a `run` type. The same script above then would be:
+```
+<html>
+  <head>
+    <!-- Add anything so it's available when your body script is run
+    <link href="to/some.css" >
+    <script src="to/some.js" /></script>
+    -->
+  </head>
+  <body>
+    <div>
+        Hello Div Panel
+    </div>
+
+    <script run="oninit">
+      console.log("I am in init", elem);
+    </script>
+
+    <sceript run="onentereditmode">
+      console.log("I entered edit mode", elem, content);
+    </script>
+
+    <script run="onexiteditmode">
+      console.log("I exited edit mode", elem);
+      let html = '<p>Hello</p>';
+      return html;
+    <script>
+      
+    <script> run="ondata">
+      console.log("I have data", data);
+    </script>
+    
+    <script>
+      console.log("You will see this on all updates");
+    </script>
+  </body>
+</html>
+```
+
 It differs from other "DIY" panels in that it tries to allow as close as possible, the ability to load and use javascript
 libraries exactly as you would if you were developing an html page without grafana. Just open the embedded code editor (monaco)
 and write your code.
+
+## Features
+1. Builtin monaco code editor
+2. Support for handlebars templates. If you log your data from the `onDivPanelDataUpdate` callback, you can use handlebars addressing to reference the data. Your templates will be resolved when the panel renders.
+3. Support for script type="module".
+
+## Development workflow
+1. Write the code in the code editor.
+2. Hit `run` to run a data update
+3. Hit `clear` to clear the the rendered HTML+Javascript. When you hit run the next time, you will also get your `onDivPanelInit` callback.
+*Important* You must hit `<CTRL+S>` in the editor to save. When saving, your control will be re-rendered.
 
 ## Callbacks
 There are four callbacks provided. 
@@ -79,4 +129,4 @@ To build:
 ## Examples
 See the examples in the examples folder
 
-Update: New screenshots!
+
