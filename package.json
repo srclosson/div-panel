@@ -20,7 +20,7 @@
     "@types/prop-types": "15.7.3",
     "@types/react": "17.0.4",
     "acorn": "6.4.1",
-    "handlebars": "4.7.6",
+    "handlebars": "4.7.7",
     "jquery": "3.5.0",
     "kind-of": "6.0.3",
     "lodash": "4.17.19",
@@ -28,7 +28,9 @@
     "postscribe": "2.0.8",
     "prop-types": "15.5.8",
     "react": "16.12.0",
-    "serialize-javascript": "5.0.1"
+    "serialize-javascript": "5.0.1",
+    "url-parse": "1.5.0",
+    "ua-parser-js": "0.7.24"
   },
   "dependencies": {
     "@types/braintree__sanitize-url": "4.1.0",
