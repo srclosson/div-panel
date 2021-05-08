@@ -107,9 +107,10 @@ and write your code.
 3. Support for script type="module".
 
 ## Development workflow
-1. Write the code in the code editor
+1. Write the code in the code editor.
 2. Hit `run` to run a data update
 3. Hit `clear` to clear the the rendered HTML+Javascript. When you hit run the next time, you will also get your `onDivPanelInit` callback.
+*Important* You must hit `<CTRL+S>` in the editor to save. When saving, your control will be re-rendered.
 
 ## Callbacks
 There are four callbacks provided. 
