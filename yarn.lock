@@ -804,11 +804,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@braintree/sanitize-url@*":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-5.0.1.tgz#3c76855aea4a71904a35c92f433462c775583452"
-  integrity sha512-KzIC8q/UsT8g6bwRAQ0NbOCNxRoGbPKtqGBUtDaN8WN80xqsbHFs8z+Eq0fR0W1wcrcTB5oKNACsrbkK4X+FWA==
-
 "@braintree/sanitize-url@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-4.0.0.tgz#2cda79ffd67b6ea919a63b5e1a883b92d636e844"
@@ -1630,13 +1625,6 @@
   dependencies:
     "@types/connect" "*"
     "@types/node" "*"
-
-"@types/braintree__sanitize-url@4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@types/braintree__sanitize-url/-/braintree__sanitize-url-4.1.0.tgz#02129c2d161cffb6effc6598b29477cba59ff1f4"
-  integrity sha512-KxodiARPAuiuWJCSCLNaxWIfP0Ab1dv6wc8tdpk5C7wiBhOgWEtWbNuwimNi20fefWEpzU05oAW8Zj8DNlHcBA==
-  dependencies:
-    "@braintree/sanitize-url" "*"
 
 "@types/classnames@^2.2.9":
   version "2.3.1"
@@ -3971,17 +3959,17 @@ copy-webpack-plugin@5.1.2:
     webpack-log "^2.0.0"
 
 core-js-compat@^3.6.2:
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.12.0.tgz#a031e51fe411085e33cb629bfee2acaa53bc309a"
-  integrity sha512-vvaN8EOvYBEjrr+MN3vCKrMNc/xdYZI+Rt/uPMROi4T5Hj8Fz6TiPQm2mrB9aZoQVW1lCFHYmMrv99aUct9mkg==
+  version "3.12.1"
+  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.12.1.tgz#2c302c4708505fa7072b0adb5156d26f7801a18b"
+  integrity sha512-i6h5qODpw6EsHAoIdQhKoZdWn+dGBF3dSS8m5tif36RlWvW3A6+yu2S16QHUo3CrkzrnEskMAt9f8FxmY9fhWQ==
   dependencies:
     browserslist "^4.16.6"
     semver "7.0.0"
 
 core-js-pure@^3.0.0:
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.12.0.tgz#c59d45954a6569232f0704d085916a5e8c3b272f"
-  integrity sha512-j2y084taJU4VMUpwuC93l19tsPbTAtOpg6/do3UOwX4eUJbsFdhEaGRQfTYthn5rDubsB88YITtei0Kw46vEQQ==
+  version "3.12.1"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.12.1.tgz#934da8b9b7221e2a2443dc71dfa5bd77a7ea00b8"
+  integrity sha512-1cch+qads4JnDSWsvc7d6nzlKAippwjUlf6vykkTLW53VSV+NkE6muGBToAjEA8pG90cSfcud3JgVmW2ds5TaQ==
 
 core-js@^1.0.0:
   version "1.2.7"
@@ -7889,11 +7877,6 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
-
-lodash@4.17.19:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
-  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 lodash@4.17.21, lodash@^4.0.1, lodash@^4.1.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.17.5, lodash@^4.7.0:
   version "4.17.21"
