@@ -29,8 +29,15 @@
       }
     ],
     "screenshots": [],
-    "version": "%VERSION%",
-    "updated": "%TODAY%"
+    "version": "1.0.0",
+    "updated": "2021-05-08",
+    "build": {
+      "time": 1620511704521,
+      "repo": "git@github.com:srclosson/div-panel.git",
+      "branch": "v1.0.x",
+      "hash": "170503f8a97cea6983f9fcec0770e996bf0118a0",
+      "number": 86
+    }
   },
   "dependencies": {
     "grafanaVersion": "6.3.x",
