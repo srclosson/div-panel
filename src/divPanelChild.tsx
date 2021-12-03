@@ -60,6 +60,6 @@ export const DivPanelChild = (props: DivPanelChildProps) => {
   // var MyChildComponent = function () { return React.createElement( 'div', null, myComponentString ); }
   // var myComponent = function () { return React.createElement( 'div', null, React.createElement( MyChildComponent, null ) ); }
 
-  const reactComponent = new Function('reactFn', "return reactFn()");
-  return reactComponent(myComponentString2);
+  const reactComponent = new Function('React, myComponent', `${myComponentString}; return myComponent`)(React, new Function());
+  return reactComponent();
 };
