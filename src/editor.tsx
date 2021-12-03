@@ -23,10 +23,10 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
   //   return () => Unhook(hookedConsole);
   // }, []);
 
-  const commitContent = (react: string) => {
+  const commitContent = (content: string) => {
     onChange({
       ...value,
-      content: `<html><body>${react}</body></html>`,
+      content,
     });
   };
 
