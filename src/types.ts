@@ -135,7 +135,7 @@ export const clearDivPanelState = () => {
 
 export const divStyle = {
   wrapper: css`
-    display: inline-grid;
+    display: grid;
     position: relative;
     width: 100%;
     height: 100%;
