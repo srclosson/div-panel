@@ -67,7 +67,7 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
 
   return (
     <>
-      <CodeEditor language="html" width="100%" height="50vh" value={content} onSave={onSave} />
+      <CodeEditor language="html" width="100%" height="50vh" value={content} onSave={onSave} showLineNumbers />
       <Button onClick={onRunClick}>Run</Button>
       <Button onClick={onClearClick}>Clear</Button>
       {/* <Console logs={logs} variant="dark" /> */}
