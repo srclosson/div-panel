@@ -1,87 +1,65 @@
-import React, { Component } from 'react';
-import * as functions from 'utils/functions';
-import { DivPanelChildProps, divStyle } from './types';
-import { register, compile } from 'utils/handlebars';
+import React from 'react';
+import { DivPanelChildProps } from './types';
 
-interface State {
-  ref: HTMLDivElement | null;
+export const Hello = () => {
+  return <div>Hello, World!</div>;
+};
+
+const myComponentString = `var myComponent = function () {
+  var ref = React.useState('Not clicked');
+  var message = ref[0];
+  var setMessage = ref[1];
+
+  var onClick = function () {
+    setMessage('Clicked')
+  }
+  
+return (
+    React.createElement( 'div', null,
+    message,
+      React.createElement( 'button', { onClick: onClick }, "Click me!")
+      )
+  )
+}`;
+
+const myComponentString2 = `function () {
+  var ref = React.useState('Not clicked');
+  var message = ref[0];
+  var setMessage = ref[1];
+
+  var onClick = function () {
+    setMessage('Clicked')
+  }
+  
+return (
+    React.createElement( 'div', null,
+    message,
+      React.createElement( 'button', { onClick: onClick }, "Click me!")
+      )
+  )
+}`;
+
+var myComponentFn = function () {
+  var ref = React.useState('Not clicked');
+  var message = ref[0];
+  var setMessage = ref[1];
+
+  var onClick = function () {
+    setMessage('Clicked')
+  }
+  
+return (
+    React.createElement( 'div', null,
+    message,
+      React.createElement( 'button', { onClick: onClick }, "Click me!")
+      )
+  )
 }
 
-export class DivPanelChild extends Component<DivPanelChildProps, State> {
-  constructor(props: DivPanelChildProps) {
-    super(props);
-    this.state = {
-      ref: null,
-    };
+export const DivPanelChild = (props: DivPanelChildProps) => {
+  // var MyChildComponent = function () { return React.createElement( 'div', null, myComponentString ); }
+  // var myComponent = function () { return React.createElement( 'div', null, React.createElement( MyChildComponent, null ) ); }
 
-    register(this.props.data);
-  }
-
-  shouldComponentUpdate = (prevProps: DivPanelChildProps, prevState: State): boolean => {
-    const truth =
-      JSON.stringify(prevProps) !== JSON.stringify(this.props) ||
-      prevProps.data.state === 'Done' ||
-      prevProps.data.state === 'Streaming';
-    return truth;
-  };
-
-  componentDidUpdate = async () => {
-    const { ref } = this.state;
-    this.panelUpdate(ref!);
-  };
-
-  panelUpdate = async (elem: HTMLDivElement) => {
-    const { data } = this.props;
-    const { scripts } = this.props.parsed;
-    const { series } = data;
-
-    scripts.forEach((s: HTMLScriptElement) => {
-      try {
-        functions.run({
-          code: s,
-          elem,
-          data: series,
-        });
-      } catch (err) {
-        //const error = typeof err === 'object' ? err.stack : err;
-        // onChange({
-        //   ...options,
-        //   error,
-        // });
-      }
-    });
-  };
-
-  loadDependencies = async (elem: HTMLDivElement) => {
-    const { imports, meta, modules, scripts } = this.props.parsed;
-    const { data } = this.props;
-    await functions.loadDependencies(elem, imports, meta);
-    await Promise.all(modules.map((i) => functions.loadModule(i, data, elem)));
-    await Promise.all(scripts.map((i) => functions.init(elem.children?.item(0)!, i)));
-    await this.panelUpdate(elem);
-  };
-
-  setRef = (element: HTMLDivElement | null) => {
-    this.setState({
-      ref: element,
-    });
-    if (element) {
-      this.loadDependencies(element);
-    }
-  };
-
-  render() {
-    const { html } = this.props.parsed;
-    const { series } = this.props.data;
-
-    return (
-      <>
-        <div
-          ref={this.setRef}
-          className={divStyle.wrapper}
-          dangerouslySetInnerHTML={{ __html: compile(html, series) }}
-        ></div>
-      </>
-    );
-  }
-}
+  const reactComponent = new Function('reactFn', "return reactFn()");
+  return reactComponent(myComponentString2);
+};

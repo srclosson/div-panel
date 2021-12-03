@@ -1,5 +1,6 @@
 import { PanelProps, PanelData } from '@grafana/data';
 import { css } from 'emotion';
+import React from 'react';
 
 export const defaultEditContent = `<html>
 <body>
@@ -101,6 +102,7 @@ export interface DivPanelChildProps {
   options: DivPanelOptions;
   parsed: DivPanelParsedHtml;
   data: PanelData;
+  parentRef: React.MutableRefObject<any>;
 }
 
 export interface DivPanelProps extends PanelProps<DivPanelOptions> {}

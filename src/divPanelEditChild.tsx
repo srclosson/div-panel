@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { DivPanelChildProps, divStyle } from './types';
-import { register, compile } from 'utils/handlebars';
-import * as functions from 'utils/functions';
+import { register, compile } from './utils/handlebars';
+import * as functions from './utils/functions';
 
 interface Props extends DivPanelChildProps {
   editMode: boolean;
@@ -80,6 +80,7 @@ export const DivPanelEditChild: React.FC<Props> = (props: Props) => {
     };
   });
 
+  //return ReactDOM.render()
   return (
     <>
       <div ref={setRef} className={divStyle.wrapper} dangerouslySetInnerHTML={{ __html: compile(html, series) }}></div>

@@ -1,6 +1,6 @@
 import postscribe from 'postscribe';
 import { DataFrame, PanelData } from '@grafana/data';
-import { DivPanelParsedHtml } from 'types';
+import { DivPanelParsedHtml } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ScriptArgs {

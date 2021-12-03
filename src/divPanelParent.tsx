@@ -1,20 +1,17 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 import { DivPanelChild } from './divPanelChild';
 import { DivPanelEditChild } from './divPanelEditChild';
 import { DivPanelType, getDivPanelState, DivPanelOptions, defaults } from './types';
 import { hasEditModeFunctions } from './utils/functions';
 import { PanelProps } from '@grafana/data';
-import { parseHtml } from 'utils/functions';
+import { parseHtml } from './utils/functions';
 
 interface Props extends PanelProps<DivPanelType> {}
 
-export class DivPanelParent extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
-  onChangeChild = (newOptions: DivPanelOptions) => {
-    const { onOptionsChange, options } = this.props;
+export const DivPanelParent = (props: Props) => {
+  const ref = useRef(null);
+  const onChangeChild = (newOptions: DivPanelOptions) => {
+    const { onOptionsChange, options } = props;
 
     onOptionsChange({
       ...options,
@@ -22,18 +19,18 @@ export class DivPanelParent extends Component<Props> {
     });
   };
 
-  onChangeEditContent = (newEditContent: string[]) => {
-    const { options } = this.props;
+  const onChangeEditContent = (newEditContent: string[]) => {
+    const { options } = props;
 
-    this.onChangeChild({
+    onChangeChild({
       ...options.editor,
       editContent: newEditContent,
     });
   };
 
-  render() {
-    const { data } = this.props;
-    const { editor } = this.props.options;
+  const render = () => {
+    const { data } = props;
+    const { editor } = props.options;
     const { content, error } = editor || defaults;
     const { command, editMode } = getDivPanelState();
 
@@ -44,17 +41,26 @@ export class DivPanelParent extends Component<Props> {
     const parsed = parseHtml(content, error);
     if (editMode && hasEditModeFunctions(content)) {
       return (
-        <DivPanelEditChild
-          onChange={this.onChangeChild}
-          editMode={editMode}
-          changeEditContent={this.onChangeEditContent}
-          options={editor}
-          parsed={parsed}
-          data={data}
-        />
+        <div ref={ref}>
+          <DivPanelEditChild
+            onChange={onChangeChild}
+            editMode={editMode}
+            changeEditContent={onChangeEditContent}
+            options={editor}
+            parsed={parsed}
+            data={data}
+            parentRef={ref}
+          />
+        </div>
       );
     }
 
-    return <DivPanelChild onChange={this.onChangeChild} options={editor} parsed={parsed} data={data} />;
-  }
-}
+    return (
+      <div ref={ref}>
+        <DivPanelChild onChange={onChangeChild} options={editor} parsed={parsed} data={data} parentRef={ref} />
+      </div>
+    );
+  };
+
+  return render();
+};
