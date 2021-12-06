@@ -10,7 +10,9 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
   const { content } = options;
 
   const commitContent = (content: string) => {
-    const transformed = buble.transform(content);
+    const transformed = buble.transform(content, {
+      transforms: { dangerousTaggedTemplateString: true },
+    });
     console.log(transformed.code);
     onChange({
       ...value,

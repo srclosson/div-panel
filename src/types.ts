@@ -46,7 +46,17 @@ export const defaultEditContent = `<html>
 </body>
 </html>`;
 
-export const defaultContent = `const myComponent = () => {
+export const defaultContent = `/**
+* Emotion CSS is available to use in your components:
+* const myStyles = {
+*   myClass: css\`
+*     color: red;
+*   \`
+* }
+*
+*/
+
+const myComponent = () => {
   return <div>Hello Div Panel</div>;
 }
 `;
