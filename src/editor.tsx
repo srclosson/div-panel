@@ -2,12 +2,12 @@ import React, { useEffect, useCallback } from 'react';
 import { StandardEditorProps } from '@grafana/data';
 import { DivPanelOptions, defaultContent, getDivPanelState, setDivPanelState, defaults } from './types';
 import { CodeEditor, Button } from '@grafana/ui';
-import buble from 'buble';
+import * as buble from 'buble';
 //import { Console, Hook, Unhook } from 'console-feed';
 
 export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = ({ value, onChange }) => {
   const options = value || defaults;
-  const content = options?.content || defaultContent;
+  const content = defaultContent;
   // const [logs, setLogs] = useState<any[]>([]);
   // onChange({
   //   ...value,
@@ -26,6 +26,7 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
 
   const commitContent = (content: string) => {
     const transformed = buble.transform(content);
+    console.log(transformed.code);
     onChange({
       ...value,
       content: transformed.code,
@@ -69,7 +70,7 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
 
   return (
     <>
-      <CodeEditor language="html" width="100%" height="50vh" value={content} onSave={onSave} showLineNumbers />
+      <CodeEditor language="javascript" width="100%" height="50vh" value={content} onSave={onSave} showLineNumbers />
       <Button onClick={onRunClick}>Run</Button>
       <Button onClick={onClearClick}>Clear</Button>
       {/* <Console logs={logs} variant="dark" /> */}

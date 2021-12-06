@@ -46,31 +46,10 @@ export const defaultEditContent = `<html>
 </body>
 </html>`;
 
-export const defaultContent = `<html>
-<body>
-  <div>
-      Hello Div Panel
-  </div>
-
-  <script>
-      /**
-       * @param elem The div element containing your div panel
-       */
-      function onDivPanelInit(elem) {
-        console.log("I am in init", elem);
-      }
-
-      /**
-       * @param data The data retrieved from your panel data config
-       */
-      function onDivPanelDataUpdate(data) {
-        console.log("I have data", data);
-      }
-      
-      console.log("Hello from my script!");
-  </script>
-</body>
-</html>`;
+export const defaultContent = `const myComponent = () => {
+  return <div>Hello Div Panel</div>;
+}
+`;
 export interface DivPanelParsedHtml {
   html: string;
   meta: HTMLMetaElement[];
