@@ -1,11 +1,11 @@
 {
   "type": "panel",
-  "name": "Div Panel",
-  "id": "grafana-div-panel",
+  "name": "React Panel",
+  "id": "grafana-react-panel",
   "info": {
-    "description": "Create your own panel with html + css and javascript",
+    "description": "Create your own panel with React",
     "author": {
-      "name": "srclosson@gmail.com",
+      "name": "Grafana Labs",
       "url": "http://grafana.com"
     },
     "keywords": [
