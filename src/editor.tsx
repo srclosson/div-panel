@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { StandardEditorProps } from '@grafana/data';
 import { DivPanelOptions, defaultContent, getDivPanelState, setDivPanelState, defaults } from './types';
 import { CodeEditor, Button } from '@grafana/ui';
+import buble from 'buble';
 //import { Console, Hook, Unhook } from 'console-feed';
 
 export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = ({ value, onChange }) => {
@@ -24,9 +25,10 @@ export const DivMonacoEditor: React.FC<StandardEditorProps<DivPanelOptions>> = (
   // }, []);
 
   const commitContent = (content: string) => {
+    const transformed = buble.transform(content);
     onChange({
       ...value,
-      content,
+      content: transformed.code,
     });
   };
 
