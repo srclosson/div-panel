@@ -23,6 +23,7 @@ export const DivPanelEditChild: React.FC<Props> = (props: Props) => {
 
   const mount = useCallback(() => {
     register(data);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const panelShutdown = (elem: HTMLDivElement) => {
@@ -55,6 +56,7 @@ export const DivPanelEditChild: React.FC<Props> = (props: Props) => {
         // });
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDependencies = async (elem: HTMLDivElement) => {
