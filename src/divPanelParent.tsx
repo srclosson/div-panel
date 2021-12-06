@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import { DivPanelChild } from './divPanelChild';
-import { DivPanelEditChild } from './divPanelEditChild';
 import { DivPanelType, getDivPanelState, DivPanelOptions, defaults } from './types';
 import { hasEditModeFunctions } from './utils/functions';
 import { PanelProps } from '@grafana/data';
@@ -19,15 +18,6 @@ export const DivPanelParent = (props: Props) => {
     });
   };
 
-  const onChangeEditContent = (newEditContent: string[]) => {
-    const { options } = props;
-
-    onChangeChild({
-      ...options.editor,
-      editContent: newEditContent,
-    });
-  };
-
   const render = () => {
     const { data } = props;
     const { editor } = props.options;
@@ -41,17 +31,7 @@ export const DivPanelParent = (props: Props) => {
     const parsed = parseHtml(content, error);
     if (editMode && hasEditModeFunctions(content)) {
       return (
-        <div ref={ref}>
-          <DivPanelEditChild
-            onChange={onChangeChild}
-            editMode={editMode}
-            changeEditContent={onChangeEditContent}
-            options={editor}
-            parsed={parsed}
-            data={data}
-            parentRef={ref}
-          />
-        </div>
+        <DivPanelChild onChange={onChangeChild} options={editor} parsed={parsed} data={data} parentRef={ref} />
       );
     }
 

@@ -1,7 +1,7 @@
 {
   "name": "grafana-react-panel",
   "version": "1.0.0",
-  "description": "Create your own panel with html + css and javascript",
+  "description": "Create your own panel using react!",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
     "test": "grafana-toolkit plugin:test",
