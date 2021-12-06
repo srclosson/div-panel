@@ -1,28 +1,13 @@
 import React from 'react';
 import { DivPanelChildProps } from './types';
 
-const myComponentString = `var myComponent = function () {
-  var ref = React.useState('Not clicked');
-  var message = ref[0];
-  var setMessage = ref[1];
-
-  var onClick = function () {
-    setMessage('Clicked')
-  }
-  
-return (
-    React.createElement( 'div', null,
-    message,
-      React.createElement( 'button', { onClick: onClick }, "Click me!")
-      )
-  )
-}`;
 
 export const DivPanelChild = (props: DivPanelChildProps) => {
+  const { options } = props;
   // var MyChildComponent = function () { return React.createElement( 'div', null, myComponentString ); }
   // var myComponent = function () { return React.createElement( 'div', null, React.createElement( MyChildComponent, null ) ); }
 
-  const reactComponent = new Function('React, myComponent', `${myComponentString}; return myComponent`)(
+  const reactComponent = new Function('React, myComponent', `${options.transformed}; return myComponent`)(
     React,
     new Function()
   );
