@@ -23,7 +23,7 @@
     "jquery": "3.5.0",
     "kind-of": "6.0.3",
     "lodash": "4.17.21",
-    "minimist": "0.2.1",
+    "minimist": "1.2.6",
     "postscribe": "2.0.8",
     "prop-types": "15.5.8",
     "react": "16.12.0",
