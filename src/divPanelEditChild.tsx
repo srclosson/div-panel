@@ -23,7 +23,7 @@ export const DivPanelEditChild: React.FC<Props> = (props: Props) => {
 
   const mount = useCallback(() => {
     register(data);
-  }, []);
+  }, [data]);
 
   const panelShutdown = (elem: HTMLDivElement) => {
     const { scripts } = parsed;
@@ -48,14 +48,10 @@ export const DivPanelEditChild: React.FC<Props> = (props: Props) => {
           data: series,
         });
       } catch (err) {
-        //const error = typeof err === 'object' ? err.stack : err;
-        // onChange({
-        //   ...options,
-        //   error,
-        // });
+        console.log("scripts.forEach error", err);
       }
     });
-  }, []);
+  }, [data, parsed]);
 
   const loadDependencies = async (elem: HTMLDivElement) => {
     const { imports, meta, scripts } = parsed;

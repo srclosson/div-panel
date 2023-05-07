@@ -1,5 +1,5 @@
 import { PanelProps, PanelData } from '@grafana/data';
-import { css } from 'emotion';
+import { css } from '@emotion/css';
 
 export const defaultEditContent = `<html>
 <body>
