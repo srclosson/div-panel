@@ -4,7 +4,5 @@ global:
   reportAll: false
 
 analyzers:
-  readme:
-    rules:
-      htmlreadme:
-        enabled: false
+  htmlreadme:
+    enabled: false
