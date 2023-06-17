@@ -1,0 +1,10 @@
+global:
+  enabled: true
+  jsonOutput: false
+  reportAll: false
+
+analyzers:
+  readme:
+    rules:
+      htmlreadme:
+        enabled: false
