@@ -21,11 +21,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/simple-react-panel"
+        "url": "https://github.com/srclosson/div-panel"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/simple-react-panel/blob/master/LICENSE"
+        "url": "https://github.com/srclosson/div-panel/blob/main/LICENSE"
       }
     ],
     "screenshots": [],
@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "grafanaVersion": "6.3.x",
+    "grafanaDependency": ">=6.3.0",
     "plugins": []
   }
 }
