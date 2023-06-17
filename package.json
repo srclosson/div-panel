@@ -1,12 +1,12 @@
 {
   "name": "grafana-div-panel",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "Create your own panel with html + css and javascript",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
     "test": "grafana-toolkit plugin:test",
     "dev": "grafana-toolkit plugin:dev",
-    "sign": "grafana-toolkit plugin:sign",
+    "sign": "grafana-toolkit plugin:sign --rootUrls https://github.com/srclosson/div-panel",
     "watch": "grafana-toolkit plugin:dev --watch"
   },
   "author": "srclosson@gmail.com",
