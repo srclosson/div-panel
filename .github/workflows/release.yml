@@ -1,5 +1,8 @@
 name: Release
 
+env:
+  GRAFANA_API_KEY: eyJrIjoiNWU0NmVhYTM4MWQ2NTIyMzEzYjM5ZTlkNmVjMTkyOTcyZGIyMzk5OCIsIm4iOiJTdGVwaCAtIFBsdWdpbiBQdWJsaXNoZXIiLCJpZCI6MTY4MzIyfQ==
+
 on:
   push:
     tags:
