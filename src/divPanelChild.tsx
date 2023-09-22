@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as functions from 'utils/functions';
 import { DivPanelChildProps, divStyle } from './types';
 import { register, compile } from 'utils/handlebars';
+import { isEqual } from 'underscore';
 
 interface State {
   ref: HTMLDivElement | null;
@@ -19,8 +20,7 @@ export class DivPanelChild extends Component<DivPanelChildProps, State> {
 
   shouldComponentUpdate = (prevProps: DivPanelChildProps, prevState: State): boolean => {
     const truth =
-      ((typeof prevProps !== "undefined" && typeof this.props !== "undefined") &&
-      (JSON.stringify(prevProps) !== JSON.stringify(this.props))) ||
+      isEqual(prevProps, this.props) ||
       prevProps.data.state === 'Done' ||
       prevProps.data.state === 'Streaming';
     return truth;
