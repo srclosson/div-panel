@@ -19,7 +19,8 @@ export class DivPanelChild extends Component<DivPanelChildProps, State> {
 
   shouldComponentUpdate = (prevProps: DivPanelChildProps, prevState: State): boolean => {
     const truth =
-      JSON.stringify(prevProps) !== JSON.stringify(this.props) ||
+      ((typeof prevProps !== "undefined" && typeof this.props !== "undefined) &&
+      (JSON.stringify(prevProps) !== JSON.stringify(this.props))) ||
       prevProps.data.state === 'Done' ||
       prevProps.data.state === 'Streaming';
     return truth;

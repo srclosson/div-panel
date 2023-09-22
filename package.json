@@ -1,6 +1,6 @@
 {
   "name": "grafana-div-panel",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Create your own panel with html + css and javascript",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
