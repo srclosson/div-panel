@@ -76,7 +76,7 @@ jobs:
           args: buildAll
 
       - name: Sign plugin
-        run: yarn sign
+        run: yarn sign --rootUrls=https://github.com/srclosson/div-panel
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }} # Requires a Grafana API key from Grafana.com.
 
