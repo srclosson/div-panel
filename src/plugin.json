@@ -1,7 +1,7 @@
 {
   "type": "panel",
   "name": "Div Panel",
-  "id": "grafana-div-panel",
+  "id": "stephanieclosson-div-panel",
   "info": {
     "description": "Create your own panel with html + css and javascript",
     "author": {
