@@ -11,7 +11,7 @@ export interface SrcDocTheme {
 
 // <script run="ondata"> and friends are shorthand for wrapping the body in the named hook.
 const RUN_HOOKS: Record<string, { name: string; params: string }> = {
-  oninit: { name: 'onDivPanelInit', params: 'elem' },
+  oninit: { name: 'onDivPanelInit', params: 'elem, content' },
   onentereditmode: { name: 'onDivPanelEnterEditMode', params: 'elem, content' },
   onexiteditmode: { name: 'onDivPanelExitEditMode', params: 'elem' },
   ondata: { name: 'onDivPanelDataUpdate', params: 'data, elem' },

@@ -14,6 +14,7 @@ interface Props extends PanelProps<DivPanelType> {}
 const SANDBOX = 'allow-scripts';
 
 type FrameMessage =
+  | { source: 'div-panel'; type: 'loaded' }
   | { source: 'div-panel'; type: 'ready'; hasEditMode: boolean }
   | { source: 'div-panel'; type: 'editContent'; content: string }
   | { source: 'div-panel'; type: 'error'; message: string };
@@ -74,6 +75,9 @@ export const DivPanel = ({ id, data, options, onOptionsChange, width, height }: 
       }
       const { editor, onOptionsChange, options } = latest.current;
       switch (e.data.type) {
+        case 'loaded':
+          post({ type: 'init', content: editor.editContent });
+          break;
         case 'ready':
           setReady(true);
           setHasEditMode(e.data.hasEditMode);

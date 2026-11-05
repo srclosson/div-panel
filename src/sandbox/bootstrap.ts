@@ -9,6 +9,7 @@ export const BOOTSTRAP = `
   var initialized = false;
 
   window.divGlobals = {};
+  window.divPanelEditContent = '';
   Object.defineProperty(window, 'divPanelContainer', {
     get: function () { return document.body; },
   });
@@ -65,13 +66,27 @@ export const BOOTSTRAP = `
         break;
       case 'exitEditMode':
         var html = call('onDivPanelExitEditMode', [document.body]);
-        post({ type: 'editContent', content: typeof html === 'string' ? html : '' });
+        window.divPanelEditContent = typeof html === 'string' ? html : '';
+        post({ type: 'editContent', content: window.divPanelEditContent });
+        break;
+      case 'init':
+        init(m.content || '');
         break;
     }
   });
 
-  window.addEventListener('load', function () {
-    call('onDivPanelInit', [document.body]);
+  // The saved edit content lives in the panel's options, so init waits for the panel to send it.
+  function init(content) {
+    if (initialized) {
+      return;
+    }
+    window.divPanelEditContent = content;
+    try {
+      window.dispatchEvent(new CustomEvent('divpanelinit', { detail: { content: content } }));
+    } catch (err) {
+      report(err);
+    }
+    call('onDivPanelInit', [document.body, content]);
     initialized = true;
     post({
       type: 'ready',
@@ -81,6 +96,10 @@ export const BOOTSTRAP = `
       dataUpdate(pendingSeries);
       pendingSeries = null;
     }
+  }
+
+  window.addEventListener('load', function () {
+    post({ type: 'loaded' });
   });
 })();
 `;
