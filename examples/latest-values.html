@@ -1,0 +1,51 @@
+<!--
+  This example shows the latest value of every series your query returns. It works with any data source, so it's
+  a good place to start: open the browser console to see the shape of the data you get.
+-->
+<html>
+<head>
+  <style>
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
+    td.value { font-variant-numeric: tabular-nums; text-align: right; }
+  </style>
+</head>
+<body>
+  <table>
+    <thead><tr><th>Series</th><th>Field</th><th>Latest</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="3">Waiting for data…</td></tr></tbody>
+  </table>
+
+  <script>
+    function onDivPanelDataUpdate(data) {
+      console.log("Panel data", data);
+      const rows = [];
+      for (const frame of data) {
+        for (const field of frame.fields) {
+          if (field.type === 'time') {
+            continue;
+          }
+          const last = field.values[field.values.length - 1];
+          rows.push({
+            series: frame.name || frame.refId || '',
+            field: field.config.displayName || field.name,
+            value: typeof last === 'number' ? last.toFixed(2) : String(last ?? ''),
+          });
+        }
+      }
+
+      const body = document.getElementById('rows');
+      body.replaceChildren(...rows.map((r) => {
+        const tr = document.createElement('tr');
+        for (const [key, text] of Object.entries(r)) {
+          const td = document.createElement('td');
+          td.textContent = text;
+          td.className = key;
+          tr.appendChild(td);
+        }
+        return tr;
+      }));
+    }
+  </script>
+</body>
+</html>

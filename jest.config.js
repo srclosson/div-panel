@@ -2,7 +2,14 @@
 // generally used by snapshots, but can affect specific tests
 process.env.TZ = 'UTC';
 
+const grafanaConfig = require('./.config/jest.config');
+
 module.exports = {
   // Jest configuration provided by Grafana scaffolding
-  ...require('./.config/jest.config'),
+  ...grafanaConfig,
+  transform: {
+    ...grafanaConfig.transform,
+    // Matches webpack's asset/source rule: .html files import as strings.
+    '\\.html$': '<rootDir>/jest-html-transform.js',
+  },
 };
