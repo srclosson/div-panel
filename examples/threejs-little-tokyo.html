@@ -10,6 +10,9 @@
 				display: flex;
 			}
 		</style>
+		<script type="importmap">
+			{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+		</script>
 	</head>
 
 	<body>
@@ -24,15 +27,15 @@
 		-->
 		<script type="module">
 			console.log("threejs got an element", divPanelContainer);
-			import * as THREE from 'https://threejs.org/build/three.module.js';
+			import * as THREE from 'three';
 
-			//import Stats from 'https://threejs.org/examples/jsm/libs/stats.module.js';
+			//import Stats from 'three/addons/libs/stats.module.js';
 
-			import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
-			import { RoomEnvironment } from 'https://threejs.org/examples/jsm/environments/RoomEnvironment.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-			import { GLTFLoader } from 'https://threejs.org/examples/jsm/loaders/GLTFLoader.js';
-			import { DRACOLoader } from 'https://threejs.org/examples/jsm/loaders/DRACOLoader.js';
+			import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+			import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 			let mixer;
 
@@ -45,7 +48,7 @@
 			const renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( container.offsetWidth, container.offsetHeight );
-			renderer.outputEncoding = THREE.sRGBEncoding;
+			renderer.outputColorSpace = THREE.SRGBColorSpace;
 			container.appendChild( renderer.domElement );
 
 			const pmremGenerator = new THREE.PMREMGenerator( renderer );
@@ -64,7 +67,7 @@
 			controls.enableDamping = true;
 
 			const dracoLoader = new DRACOLoader();
-			dracoLoader.setDecoderPath( 'https://threejs.org/examples/js/libs/draco/gltf/' );
+			dracoLoader.setDecoderPath( 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/gltf/' );
 
 			const loader = new GLTFLoader();
 			loader.setDRACOLoader( dracoLoader );

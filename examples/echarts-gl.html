@@ -1,10 +1,7 @@
 <html>
 <head>
-  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/echarts.min.js?_v_=1584690369972"></script>
-  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts-stat/ecStat.min.js?_v_=1584690369972"></script>
-  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/map/js/china.js?_v_=1584690369972"></script>
-  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/map/js/world.js?_v_=1584690369972"></script>
-  <script type="text/javascript" src="https://echarts.apache.org/examples/vendors/echarts/extension/dataTool.js?_v_=1584690369972"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/dist/echarts.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl@1.1.1/dist/echarts-gl.min.js"></script>
 </head>
 <body>
@@ -48,7 +45,7 @@
        */
       function onDivPanelInit(elem) {
         console.log("I am in init", elem);
-        window.myChart = echarts.init(elem.item(0));
+        window.myChart = echarts.init(document.getElementById('container'));
         
         option = {
             backgroundColor: '#000',

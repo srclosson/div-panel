@@ -15,7 +15,7 @@
         function onDivPanelEnterEditMode(elem, content) {
           console.log("I entered edit mode", elem, window.ckedit);
           if (!window.ckedit) {
-            ClassicEditor.create(elem.item(0))
+            ClassicEditor.create(document.getElementById('ckeditor'))
             .then(editor => {
               editor.setData(content);
               window.ckedit = editor;

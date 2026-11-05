@@ -3,15 +3,15 @@
 ![](https://raw.githubusercontent.com/srclosson/grafana-div-panel/master/src/img/screenshot1.png)
 ![](https://raw.githubusercontent.com/srclosson/grafana-div-panel/master/src/img/echarts-gl-gps.png)
 
-The div panel is a generic panel allowing you to specify your own html and javascript
+The div panel is a generic panel allowing you to specify your own html and javascript.
 Just write your html the same way you normally would:
 
-```
+```html
 <html>
   <head>
     <!-- Add anything so it's available when your body script is run
-    <link href="to/some.css" >
-    <script src="to/some.js" /></script>
+    <link href="to/some.css" rel="stylesheet">
+    <script src="to/some.js"></script>
     -->
   </head>
   <body>
@@ -21,52 +21,51 @@ Just write your html the same way you normally would:
 
     <script>
         /**
-         * @param elem The div element containing your div panel
+         * Runs once, after the document and its scripts have loaded.
+         * @param elem The <body> of the panel's document
          */
         function onDivPanelInit(elem) {
           console.log("I am in init", elem);
         }
 
         /**
-         * @param elem The div element containing your panel
-         * @param content The content set by the editor you used while in edit mode
+         * Runs when the panel starts edit mode (see "Editing inside the panel").
+         * @param elem The <body> of the panel's document
+         * @param content What onDivPanelExitEditMode returned last time
          */
         function onDivPanelEnterEditMode(elem, content) {
           console.log("I entered edit mode", elem, content);
         }
 
         /**
-         * @param elem The div element containing your div panel
-         * @returns The html content to save and be loaded in onDivPanelEnterEditMode
+         * @param elem The <body> of the panel's document
+         * @returns The html content to save and hand back to onDivPanelEnterEditMode
          */
         function onDivPanelExitEditMode(elem) {
           console.log("I exited edit mode", elem);
-          let html = '<p>Hello</p>';
-          return html;
+          return '<p>Hello</p>';
         }
 
         /**
-         * @param data The data retrieved from your panel data config
+         * Runs every time the panel's query returns data.
+         * @param data The panel's data frames
+         * @param elem The <body> of the panel's document
          */
-        function onDivPanelDataUpdate(data) {
+        function onDivPanelDataUpdate(data, elem) {
           console.log("I have data", data);
         }
-        
-        console.log("Hello from my script!");
+
+        console.log("This runs once, when the document loads");
     </script>
   </body>
 </html>
 ```
 
-Alternatively, you can use `script` tags and specify a `run` type. The same script above then would be:
-```
+Alternatively, you can use `script` tags with a `run` attribute. Each one becomes the body of the matching callback,
+so this is the same as the script above:
+
+```html
 <html>
-  <head>
-    <!-- Add anything so it's available when your body script is run
-    <link href="to/some.css" >
-    <script src="to/some.js" /></script>
-    -->
-  </head>
   <body>
     <div>
         Hello Div Panel
@@ -76,22 +75,17 @@ Alternatively, you can use `script` tags and specify a `run` type. The same scri
       console.log("I am in init", elem);
     </script>
 
-    <sceript run="onentereditmode">
+    <script run="onentereditmode">
       console.log("I entered edit mode", elem, content);
     </script>
 
     <script run="onexiteditmode">
       console.log("I exited edit mode", elem);
-      let html = '<p>Hello</p>';
-      return html;
-    <script>
-      
-    <script> run="ondata">
-      console.log("I have data", data);
+      return '<p>Hello</p>';
     </script>
-    
-    <script>
-      console.log("You will see this on all updates");
+
+    <script run="ondata">
+      console.log("I have data", data);
     </script>
   </body>
 </html>
@@ -101,23 +95,65 @@ It differs from other "DIY" panels in that it tries to allow as close as possibl
 libraries exactly as you would if you were developing an html page without grafana. Just open the embedded code editor (monaco)
 and write your code.
 
+## How it runs: a sandboxed iframe
+
+Each panel's document runs in its own `<iframe sandbox="allow-scripts">`. Because the frame is not given
+`allow-same-origin`, it gets an opaque (`null`) origin. Your code:
+
+- **can** load scripts, styles, fonts and images from other sites, use `type="module"` and import maps, draw to canvas and
+  WebGL, and `fetch` from any server that allows cross-origin requests (`Access-Control-Allow-Origin: *`).
+- **cannot** read or change the Grafana page, read Grafana's cookies or local storage, or call Grafana's API as the
+  person viewing the dashboard. It also can't open popups, submit forms, show `alert()` dialogs or navigate the dashboard away.
+
+That means a dashboard editor can't use a div panel to act as whoever views the dashboard. You don't need to change
+`allow_embedding`: the panel builds the document itself (`srcdoc`), so Grafana's `X-Frame-Options` never applies to it.
+
+Things to know:
+
+- Each panel is isolated. `window`, globals and `divGlobals` are per panel, so two div panels on one dashboard can't collide.
+- Your document loads once. Data updates arrive as `onDivPanelDataUpdate` calls; top-level code doesn't re-run.
+- Data arrives as plain objects: `{ name, refId, meta, length, fields: [{ name, type, config, labels, values }] }`.
+  Grafana's helper functions (such as `field.display`) don't cross into the frame.
+- Script errors, including uncaught exceptions and rejected promises, are shown at the bottom of the panel.
+- The panel follows Grafana's light/dark theme and font.
+- If you've turned on Grafana's `content_security_policy`, the frame inherits that policy, and Grafana's default template
+  blocks the inline scripts the panel needs. Leave it off or adjust the template to use this panel.
+
 ## Features
 1. Builtin monaco code editor
-2. Support for handlebars templates. If you log your data from the `onDivPanelDataUpdate` callback, you can use handlebars addressing to reference the data. Your templates will be resolved when the panel renders.
-3. Support for script type="module".
+2. Support for handlebars templates in your markup, with the panel's data frames as context: `{{0.name}}` is the first
+   frame's name and `{{last}}` is the latest value of the first frame's second field. Templates are not applied inside
+   `<script>` tags. When the rendered markup changes, the panel's document reloads (and `onDivPanelInit` runs again), so
+   prefer `onDivPanelDataUpdate` for values that change every refresh.
+3. Support for script type="module". `divPanelContainer` is available to modules and is the document's `<body>`.
 
 ## Development workflow
 1. Write the code in the code editor.
-2. Hit `run` to run a data update
-3. Hit `clear` to clear the the rendered HTML+Javascript. When you hit run the next time, you will also get your `onDivPanelInit` callback.
-*Important* You must hit `<CTRL+S>` in the editor to save. When saving, your control will be re-rendered.
+2. Hit `Run`, press `<CTRL+S>`, or click outside the editor to apply your changes. The panel reloads with the new document.
+
+## Editing inside the panel
+If your document defines both `onDivPanelEnterEditMode` and `onDivPanelExitEditMode`, opening the panel's editor
+calls `onDivPanelEnterEditMode(elem, content)` and shows a toolbar above the panel:
+
+- **Save edits** calls `onDivPanelExitEditMode(elem)` and saves the string it returns with the panel.
+- **Edit** calls `onDivPanelEnterEditMode(elem, content)` again with the saved content.
+
+Click **Save edits** before leaving the panel editor. The panel also tries to save when you leave, but the frame
+answers asynchronously, so Grafana may close the panel first. See `examples/ckeditor.html`.
 
 ## Callbacks
-There are four callbacks provided. 
-1. `onDivPanelInit`: Called when your panel is contructed and your html is available.
-2. `onDivPanelDataUpdate`: Called with the data retrieved from the datasource.
-3. `onDivPanelEnterEditMode`: Called whenever you enter edit mode.
-4. `onDivPanelExitEditMode`: Called whenever you exit edit mode.
+There are four callbacks provided. In all of them `elem` is the `<body>` of the panel's document.
+1. `onDivPanelInit(elem)`: Called once, after your html and its scripts have loaded.
+2. `onDivPanelDataUpdate(data, elem)`: Called with the data retrieved from the datasource, on every update.
+3. `onDivPanelEnterEditMode(elem, content)`: Called when edit mode starts.
+4. `onDivPanelExitEditMode(elem)`: Called on **Save edits**. Return the html to save.
+
+## Upgrading from 1.x
+- Panels now run in a sandboxed iframe (see above). Code that reached into the Grafana page, its cookies or its API will stop working.
+- `elem` is now the document's `<body>` in every callback. Previously `onDivPanelInit` received the first element and
+  `onDivPanelDataUpdate` the wrapper. Use `document.getElementById(...)` to find your elements.
+- `divPanelElementUUID` is gone; use `divPanelContainer` or `document.body`.
+- The `Clear` button is gone. `Run` applies what's in the editor, even if you haven't pressed `<CTRL+S>`.
 
 ## Building
 To build:
@@ -128,5 +164,3 @@ To build:
 
 ## Examples
 See the examples in the examples folder
-
-
