@@ -32,7 +32,7 @@ describe('buildSrcDoc', () => {
   });
 
   it.each([
-    ['oninit', 'function onDivPanelInit(elem)'],
+    ['oninit', 'function onDivPanelInit(elem, content)'],
     ['onData', 'function onDivPanelDataUpdate(data, elem)'],
     ['onentereditmode', 'function onDivPanelEnterEditMode(elem, content)'],
     ['onexiteditmode', 'function onDivPanelExitEditMode(elem)'],

@@ -9,8 +9,9 @@
   <body>
     <div id="ckeditor" contenteditable="false"></div>
     <script>
-        function onDivPanelInit(elem) {
-          console.log("I am in init", );
+        function onDivPanelInit(elem, content) {
+          // Outside edit mode, show what was saved the last time someone edited the panel.
+          document.getElementById('ckeditor').innerHTML = content;
         }
         function onDivPanelEnterEditMode(elem, content) {
           console.log("I entered edit mode", elem, window.ckedit);
@@ -28,12 +29,14 @@
         function onDivPanelExitEditMode(elem) {
           let html = '';
           if (window.ckedit) {
-            html = window.ckedit.getData();
-            window.ckedit.destroy();
+            const editor = window.ckedit;
             window.ckedit = null;
+            html = editor.getData();
+            // destroy() leaves the original element empty, so show the saved html again.
+            editor.destroy().then(() => {
+              document.getElementById('ckeditor').innerHTML = html;
+            });
           }
-          
-          console.log("I exited edit mode", html);
           return html;
         }
         function onDivPanelDataUpdate(data) {

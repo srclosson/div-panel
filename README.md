@@ -23,9 +23,10 @@ Just write your html the same way you normally would:
         /**
          * Runs once, after the document and its scripts have loaded.
          * @param elem The <body> of the panel's document
+         * @param content What onDivPanelExitEditMode returned last time ('' if never edited)
          */
-        function onDivPanelInit(elem) {
-          console.log("I am in init", elem);
+        function onDivPanelInit(elem, content) {
+          console.log("I am in init", elem, content);
         }
 
         /**
@@ -72,7 +73,7 @@ so this is the same as the script above:
     </div>
 
     <script run="oninit">
-      console.log("I am in init", elem);
+      console.log("I am in init", elem, content);
     </script>
 
     <script run="onentereditmode">
@@ -126,12 +127,19 @@ Things to know:
    `<script>` tags. When the rendered markup changes, the panel's document reloads (and `onDivPanelInit` runs again), so
    prefer `onDivPanelDataUpdate` for values that change every refresh.
 3. Support for script type="module". `divPanelContainer` is available to modules and is the document's `<body>`.
+   Modules run before init, so to use the saved edit content, listen for the `divpanelinit` event:
+   `addEventListener('divpanelinit', (e) => render(e.detail.content))`.
 
 ## Development workflow
 1. Write the code in the code editor.
 2. Hit `Run`, press `<CTRL+S>`, or click outside the editor to apply your changes. The panel reloads with the new document.
 
 ## Editing inside the panel
+Edit mode lets someone change what the panel shows (with a WYSIWYG or drag-and-drop editor you build, for example)
+without touching your code. Your code stays as it is in the code editor; the result of their edits is saved
+separately with the panel, and every time the panel loads it's handed to `onDivPanelInit(elem, content)`, where
+your code renders it.
+
 If your document defines both `onDivPanelEnterEditMode` and `onDivPanelExitEditMode`, opening the panel's editor
 calls `onDivPanelEnterEditMode(elem, content)` and shows a toolbar above the panel:
 
@@ -139,11 +147,14 @@ calls `onDivPanelEnterEditMode(elem, content)` and shows a toolbar above the pan
 - **Edit** calls `onDivPanelEnterEditMode(elem, content)` again with the saved content.
 
 Click **Save edits** before leaving the panel editor. The panel also tries to save when you leave, but the frame
-answers asynchronously, so Grafana may close the panel first. See `examples/ckeditor.html`.
+answers asynchronously, so Grafana may close the panel first. Remember to save the dashboard too: the edits are
+stored in its JSON. See `examples/ckeditor.html`.
+
+The saved content is also available to any script as `divPanelEditContent`, once init has run.
 
 ## Callbacks
 There are four callbacks provided. In all of them `elem` is the `<body>` of the panel's document.
-1. `onDivPanelInit(elem)`: Called once, after your html and its scripts have loaded.
+1. `onDivPanelInit(elem, content)`: Called once, after your html and its scripts have loaded, with the saved edit content.
 2. `onDivPanelDataUpdate(data, elem)`: Called with the data retrieved from the datasource, on every update.
 3. `onDivPanelEnterEditMode(elem, content)`: Called when edit mode starts.
 4. `onDivPanelExitEditMode(elem)`: Called on **Save edits**. Return the html to save.
