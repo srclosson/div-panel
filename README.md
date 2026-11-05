@@ -131,7 +131,8 @@ Things to know:
    `addEventListener('divpanelinit', (e) => render(e.detail.content))`.
 
 ## Development workflow
-1. Write the code in the code editor.
+1. Write the code in the code editor, or pick one from **Start from an example…** above it. If you've changed the
+   code, you're asked before it's replaced.
 2. Hit `Run`, press `<CTRL+S>`, or click outside the editor to apply your changes. The panel reloads with the new document.
 
 ## Editing inside the panel
@@ -174,4 +175,5 @@ To build:
 4. Restart grafana
 
 ## Examples
-See the examples in the examples folder
+The examples in the `examples/` folder are built into the plugin and listed in the editor's **Start from an example…**
+picker. To add one, put the `.html` file in `examples/` and add it to `src/examples.ts`.
