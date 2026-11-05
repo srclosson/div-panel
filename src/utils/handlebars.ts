@@ -1,16 +1,19 @@
-import { PanelData, DataFrame } from '@grafana/data';
-const Handlebars = require('handlebars');
+import Handlebars from 'handlebars';
+import { DataFrame } from '@grafana/data';
 
-export const register = (data: PanelData) => {
-  Handlebars.registerHelper('last', () =>
-    data.series[0].fields[1].values.get(data.series[0].fields[1].values.length - 1)
-  );
-};
-
+/**
+ * Compiles the panel markup with the current series as context. Helpers live on a fresh Handlebars
+ * environment per call so that panels on the same dashboard can't see each other's data.
+ */
 export const compile = (html: string, series: DataFrame[]): string => {
+  const env = Handlebars.create();
+  env.registerHelper('last', () => {
+    const values = series[0]?.fields[1]?.values;
+    return values?.length ? values[values.length - 1] : '';
+  });
+
   try {
-    const template = Handlebars.compile(html);
-    return template(series);
+    return env.compile(html)(series);
   } catch (ex) {
     return html;
   }
