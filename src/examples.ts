@@ -41,7 +41,7 @@ export const examples: DivPanelExample[] = [
   },
   {
     label: 'Leaflet + Strava',
-    description: 'Draws your Strava activities on a Leaflet map. Needs the Strava data source.',
+    description: 'A Leaflet map with OpenStreetMap tiles. Draws your activities with the Strava data source.',
     content: leafletStrava,
   },
 ];
